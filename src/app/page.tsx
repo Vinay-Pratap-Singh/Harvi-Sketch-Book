@@ -1,3 +1,9 @@
+import HeaderToolBox from "@/components/custom/HeaderToolBox";
+
 export default function Home() {
-  return <h1>Sketch Board</h1>;
+  return (
+    <>
+      <HeaderToolBox />
+    </>
+  );
 }
