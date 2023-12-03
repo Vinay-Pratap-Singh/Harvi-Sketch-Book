@@ -1,65 +1,79 @@
-import React from "react";
+"use client";
+import React, { useState } from "react";
+import { Button } from "../ui/button";
+import { Separator } from "../ui/separator";
 
 const HeaderToolBox = () => {
+  const [isLocked, setIsLoacked] = useState<boolean>(false);
   return (
-    <section>
+    <section className="w-fit flex items-center my-5 py-2 px-4 shadow-md rounded-md space-x-2">
       {/* for lock and unlock */}
-      <div>
-        {/* lock */}
-        <i className="fa-solid fa-lock" />
-        {/* unlock */}
-        <i className="fa-solid fa-lock-open" />
-      </div>
+      <Button
+        variant={"ghost"}
+        size={"sm"}
+        className="hover:bg-mainTertiary"
+        onClick={() => setIsLoacked(!isLocked)}
+      >
+        {isLocked ? (
+          <i className="fa-solid fa-lock" />
+        ) : (
+          <i className="fa-solid fa-lock-open" />
+        )}
+      </Button>
+
+      <Separator orientation="vertical" />
 
       {/* for square */}
-      <div>
+      <Button variant={"ghost"} size={"sm"} className="hover:bg-mainTertiary">
         <i className="fa-regular fa-square" />
-      </div>
+      </Button>
 
       {/* for circle */}
-      <div>
+      <Button variant={"ghost"} size={"sm"} className="hover:bg-mainTertiary">
         <i className="fa-regular fa-circle" />
-      </div>
+      </Button>
 
       {/* for arrow */}
-      <div>
+      <Button variant={"ghost"} size={"sm"} className="hover:bg-mainTertiary">
         <i className="fa-solid fa-arrow-right" />
-      </div>
+      </Button>
 
       {/* for line */}
-      <div>
+      <Button variant={"ghost"} size={"sm"} className="hover:bg-mainTertiary">
         <i className="fa-solid fa-minus" />
-      </div>
+      </Button>
 
       {/* for text */}
-      <div>
+      <Button variant={"ghost"} size={"sm"} className="hover:bg-mainTertiary">
         <i className="fa-solid fa-font" />
-      </div>
+      </Button>
 
       {/* for image */}
-      <div>
+      <Button variant={"ghost"} size={"sm"} className="hover:bg-mainTertiary">
         <i className="fa-regular fa-image" />
-      </div>
+      </Button>
 
       {/* for pencil */}
-      <div>
+      <Button variant={"ghost"} size={"sm"} className="hover:bg-mainTertiary">
         <i className="fa-solid fa-pencil" />
-      </div>
+      </Button>
+
+      <Separator orientation="vertical" />
 
       {/* for undo */}
-      <div>
+      <Button variant={"ghost"} size={"sm"} className="hover:bg-mainTertiary">
         <i className="fa-solid fa-rotate-left" />
-      </div>
+      </Button>
 
       {/* for redo */}
-      <div>
+      <Button variant={"ghost"} size={"sm"} className="hover:bg-mainTertiary">
         <i className="fa-solid fa-rotate-right" />
-      </div>
+      </Button>
 
       {/* for eraser */}
-      <div>
+      <Button variant={"ghost"} size={"sm"} className="hover:bg-mainTertiary">
         <i className="fa-solid fa-eraser" />
-      </div>
+      </Button>
     </section>
   );
 };
