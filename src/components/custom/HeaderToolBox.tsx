@@ -2,78 +2,223 @@
 import React, { useState } from "react";
 import { Button } from "../ui/button";
 import { Separator } from "../ui/separator";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "../ui/tooltip";
 
 const HeaderToolBox = () => {
   const [isLocked, setIsLocked] = useState<boolean>(false);
   return (
     <section className="w-fit flex items-center my-5 py-2 px-4 shadow-md rounded-md space-x-2">
       {/* for lock and unlock */}
-      <Button
-        variant={"ghost"}
-        size={"sm"}
-        className="hover:bg-mainTertiary"
-        onClick={() => setIsLocked(!isLocked)}
-      >
-        {isLocked ? (
-          <i className="fa-solid fa-lock" />
-        ) : (
-          <i className="fa-solid fa-lock-open" />
-        )}
-      </Button>
+      <TooltipProvider>
+        <Tooltip>
+          <TooltipTrigger asChild>
+            <Button
+              variant={"ghost"}
+              size={"sm"}
+              className="hover:bg-mainTertiary"
+              onClick={() => setIsLocked(!isLocked)}
+            >
+              {isLocked ? (
+                <i className="fa-solid fa-lock" />
+              ) : (
+                <i className="fa-solid fa-lock-open" />
+              )}
+            </Button>
+          </TooltipTrigger>
+          <TooltipContent>
+            <p>{isLocked ? "Unlock sketch board" : "Lock sketch board"}</p>
+          </TooltipContent>
+        </Tooltip>
+      </TooltipProvider>
 
       <Separator orientation="vertical" />
 
       {/* for square */}
-      <Button variant={"ghost"} size={"sm"} className="hover:bg-mainTertiary">
-        <i className="fa-regular fa-square" />
-      </Button>
+      <TooltipProvider>
+        <Tooltip>
+          <TooltipTrigger asChild>
+            <Button
+              variant={"ghost"}
+              size={"sm"}
+              className="hover:bg-mainTertiary"
+            >
+              <i className="fa-regular fa-square" />
+            </Button>
+          </TooltipTrigger>
+          <TooltipContent>
+            <p>Square</p>
+          </TooltipContent>
+        </Tooltip>
+      </TooltipProvider>
 
       {/* for circle */}
-      <Button variant={"ghost"} size={"sm"} className="hover:bg-mainTertiary">
-        <i className="fa-regular fa-circle" />
-      </Button>
+      <TooltipProvider>
+        <Tooltip>
+          <TooltipTrigger asChild>
+            <Button
+              variant={"ghost"}
+              size={"sm"}
+              className="hover:bg-mainTertiary"
+            >
+              <i className="fa-regular fa-circle" />
+            </Button>
+          </TooltipTrigger>
+          <TooltipContent>
+            <p>Circle</p>
+          </TooltipContent>
+        </Tooltip>
+      </TooltipProvider>
 
       {/* for arrow */}
-      <Button variant={"ghost"} size={"sm"} className="hover:bg-mainTertiary">
-        <i className="fa-solid fa-arrow-right" />
-      </Button>
+      <TooltipProvider>
+        <Tooltip>
+          <TooltipTrigger asChild>
+            <Button
+              variant={"ghost"}
+              size={"sm"}
+              className="hover:bg-mainTertiary"
+            >
+              <i className="fa-solid fa-arrow-right" />
+            </Button>
+          </TooltipTrigger>
+          <TooltipContent>
+            <p>Arrow</p>
+          </TooltipContent>
+        </Tooltip>
+      </TooltipProvider>
 
       {/* for line */}
-      <Button variant={"ghost"} size={"sm"} className="hover:bg-mainTertiary">
-        <i className="fa-solid fa-minus" />
-      </Button>
+      <TooltipProvider>
+        <Tooltip>
+          <TooltipTrigger asChild>
+            <Button
+              variant={"ghost"}
+              size={"sm"}
+              className="hover:bg-mainTertiary"
+            >
+              <i className="fa-solid fa-minus" />
+            </Button>
+          </TooltipTrigger>
+          <TooltipContent>
+            <p>Line</p>
+          </TooltipContent>
+        </Tooltip>
+      </TooltipProvider>
 
       {/* for text */}
-      <Button variant={"ghost"} size={"sm"} className="hover:bg-mainTertiary">
-        <i className="fa-solid fa-font" />
-      </Button>
+      <TooltipProvider>
+        <Tooltip>
+          <TooltipTrigger asChild>
+            <Button
+              variant={"ghost"}
+              size={"sm"}
+              className="hover:bg-mainTertiary"
+            >
+              <i className="fa-solid fa-font" />
+            </Button>
+          </TooltipTrigger>
+          <TooltipContent>
+            <p>Add text</p>
+          </TooltipContent>
+        </Tooltip>
+      </TooltipProvider>
 
       {/* for image */}
-      <Button variant={"ghost"} size={"sm"} className="hover:bg-mainTertiary">
-        <i className="fa-regular fa-image" />
-      </Button>
+      <TooltipProvider>
+        <Tooltip>
+          <TooltipTrigger asChild>
+            <Button
+              variant={"ghost"}
+              size={"sm"}
+              className="hover:bg-mainTertiary"
+            >
+              <i className="fa-regular fa-image" />
+            </Button>
+          </TooltipTrigger>
+          <TooltipContent>
+            <p>Add image</p>
+          </TooltipContent>
+        </Tooltip>
+      </TooltipProvider>
 
       {/* for pencil */}
-      <Button variant={"ghost"} size={"sm"} className="hover:bg-mainTertiary">
-        <i className="fa-solid fa-pencil" />
-      </Button>
+      <TooltipProvider>
+        <Tooltip>
+          <TooltipTrigger asChild>
+            <Button
+              variant={"ghost"}
+              size={"sm"}
+              className="hover:bg-mainTertiary"
+            >
+              <i className="fa-solid fa-pencil" />
+            </Button>
+          </TooltipTrigger>
+          <TooltipContent>
+            <p>Draw</p>
+          </TooltipContent>
+        </Tooltip>
+      </TooltipProvider>
 
       <Separator orientation="vertical" />
 
       {/* for undo */}
-      <Button variant={"ghost"} size={"sm"} className="hover:bg-mainTertiary">
-        <i className="fa-solid fa-rotate-left" />
-      </Button>
+      <TooltipProvider>
+        <Tooltip>
+          <TooltipTrigger asChild>
+            <Button
+              variant={"ghost"}
+              size={"sm"}
+              className="hover:bg-mainTertiary"
+            >
+              <i className="fa-solid fa-rotate-left" />
+            </Button>
+          </TooltipTrigger>
+          <TooltipContent>
+            <p>Undo</p>
+          </TooltipContent>
+        </Tooltip>
+      </TooltipProvider>
 
       {/* for redo */}
-      <Button variant={"ghost"} size={"sm"} className="hover:bg-mainTertiary">
-        <i className="fa-solid fa-rotate-right" />
-      </Button>
+      <TooltipProvider>
+        <Tooltip>
+          <TooltipTrigger asChild>
+            <Button
+              variant={"ghost"}
+              size={"sm"}
+              className="hover:bg-mainTertiary"
+            >
+              <i className="fa-solid fa-rotate-right" />
+            </Button>
+          </TooltipTrigger>
+          <TooltipContent>
+            <p>Redo</p>
+          </TooltipContent>
+        </Tooltip>
+      </TooltipProvider>
 
       {/* for eraser */}
-      <Button variant={"ghost"} size={"sm"} className="hover:bg-mainTertiary">
-        <i className="fa-solid fa-eraser" />
-      </Button>
+      <TooltipProvider>
+        <Tooltip>
+          <TooltipTrigger asChild>
+            <Button
+              variant={"ghost"}
+              size={"sm"}
+              className="hover:bg-mainTertiary"
+            >
+              <i className="fa-solid fa-eraser" />
+            </Button>
+          </TooltipTrigger>
+          <TooltipContent>
+            <p>Eraser</p>
+          </TooltipContent>
+        </Tooltip>
+      </TooltipProvider>
     </section>
   );
 };

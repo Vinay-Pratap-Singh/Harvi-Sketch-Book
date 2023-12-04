@@ -1,13 +1,5 @@
-import React, { useId } from "react";
-import {
-  Sheet,
-  SheetClose,
-  SheetContent,
-  SheetFooter,
-  SheetHeader,
-  SheetTitle,
-  SheetTrigger,
-} from "../ui/sheet";
+import React from "react";
+import { Sheet, SheetContent, SheetTrigger } from "../ui/sheet";
 import { Button } from "../ui/button";
 import { Separator } from "../ui/separator";
 import { Input } from "../ui/input";
@@ -39,8 +31,7 @@ const Sidebar = () => {
           <i className="fa-solid fa-bars" />
         </Button>
       </SheetTrigger>
-      <SheetContent side={"left"} className="w-72">
-        <SheetHeader>{/* <SheetTitle>Edit profile</SheetTitle> */}</SheetHeader>
+      <SheetContent side={"left"} className="w-72 overflow-y-scroll">
         <div className="space-y-5">
           {/* for stroke color */}
           <div className="space-y-1">
@@ -146,12 +137,60 @@ const Sidebar = () => {
               </div>
             </div>
           </div>
+
+          <Separator orientation="horizontal" />
+
+          {/* for extra option */}
+          <div className="space-y-2">
+            <Button
+              variant={"outline"}
+              className="hover:bg-mainSecondary w-full flex items-center justify-start gap-2"
+            >
+              <i className="fa-solid fa-download" /> <p>Export sketch</p>
+            </Button>
+            <Button
+              variant={"outline"}
+              className="hover:bg-mainSecondary w-full flex items-center justify-start gap-2"
+            >
+              <i className="fa-solid fa-user-group" />
+              <p>Live collaboration</p>
+            </Button>
+            <Button
+              variant={"outline"}
+              className="hover:bg-mainSecondary w-full flex items-center justify-start gap-2"
+            >
+              <i className="fa-solid fa-trash" />
+              <p>Reset the canvas</p>
+            </Button>
+          </div>
+
+          <Separator />
+
+          {/* for social media options */}
+          <div className="space-y-2">
+            <Button
+              variant={"outline"}
+              className="hover:bg-mainSecondary w-full flex items-center justify-start gap-2"
+            >
+              <i className="fa-brands fa-github" />
+              <p>Github</p>
+            </Button>
+            <Button
+              variant={"outline"}
+              className="hover:bg-mainSecondary w-full flex items-center justify-start gap-2"
+            >
+              <i className="fa-brands fa-linkedin" />
+              <p>Linkedin</p>
+            </Button>
+            <Button
+              variant={"outline"}
+              className="hover:bg-mainSecondary w-full flex items-center justify-start gap-2"
+            >
+              <i className="fa-solid fa-bug" />
+              <p>Report a bug</p>
+            </Button>
+          </div>
         </div>
-        <SheetFooter>
-          <SheetClose asChild>
-            {/* <Button type="submit">Save changes</Button> */}
-          </SheetClose>
-        </SheetFooter>
       </SheetContent>
     </Sheet>
   );
