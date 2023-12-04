@@ -4,7 +4,7 @@ import { Button } from "../ui/button";
 import { Separator } from "../ui/separator";
 
 const HeaderToolBox = () => {
-  const [isLocked, setIsLoacked] = useState<boolean>(false);
+  const [isLocked, setIsLocked] = useState<boolean>(false);
   return (
     <section className="w-fit flex items-center my-5 py-2 px-4 shadow-md rounded-md space-x-2">
       {/* for lock and unlock */}
@@ -12,7 +12,7 @@ const HeaderToolBox = () => {
         variant={"ghost"}
         size={"sm"}
         className="hover:bg-mainTertiary"
-        onClick={() => setIsLoacked(!isLocked)}
+        onClick={() => setIsLocked(!isLocked)}
       >
         {isLocked ? (
           <i className="fa-solid fa-lock" />
