@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Poppins } from "next/font/google";
 import "./globals.css";
+import StoreProvider from "@/redux/StoreProvider";
 
 const poppin = Poppins({
   weight: ["300", "400", "700", "500", "600", "700", "800", "900"],
@@ -30,7 +31,9 @@ export default function RootLayout({
           referrerPolicy="no-referrer"
         />
       </head>
-      <body className={poppin.className}>{children}</body>
+      <body className={poppin.className}>
+        <StoreProvider>{children}</StoreProvider>
+      </body>
     </html>
   );
 }
