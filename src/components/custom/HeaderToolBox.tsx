@@ -8,11 +8,15 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "../ui/tooltip";
+import { useAppDispatch, useAppSelector } from "@/hooks/redux";
+import { toggleCanvasLock } from "@/redux/toolkitSlice";
 
 const HeaderToolBox = () => {
-  const [isLocked, setIsLocked] = useState<boolean>(false);
+  const dispatch = useAppDispatch();
+  const { isCanvasLocked } = useAppSelector((state) => state.toolkit);
+
   return (
-    <section className="w-fit flex items-center my-5 py-2 px-4 shadow-md rounded-md space-x-2 absolute z-10">
+    <section className="w-fit flex items-center my-5 py-2 px-4 shadow-md rounded-md space-x-2 absolute z-10 bg-transparent">
       {/* for lock and unlock */}
       <TooltipProvider>
         <Tooltip>
@@ -21,9 +25,11 @@ const HeaderToolBox = () => {
               variant={"ghost"}
               size={"sm"}
               className="hover:bg-mainTertiary"
-              onClick={() => setIsLocked(!isLocked)}
+              onClick={() => {
+                dispatch(toggleCanvasLock(!isCanvasLocked));
+              }}
             >
-              {isLocked ? (
+              {isCanvasLocked ? (
                 <i className="fa-solid fa-lock" />
               ) : (
                 <i className="fa-solid fa-lock-open" />
@@ -31,7 +37,9 @@ const HeaderToolBox = () => {
             </Button>
           </TooltipTrigger>
           <TooltipContent>
-            <p>{isLocked ? "Unlock sketch board" : "Lock sketch board"}</p>
+            <p>
+              {isCanvasLocked ? "Unlock sketch board" : "Lock sketch board"}
+            </p>
           </TooltipContent>
         </Tooltip>
       </TooltipProvider>
@@ -43,6 +51,7 @@ const HeaderToolBox = () => {
         <Tooltip>
           <TooltipTrigger asChild>
             <Button
+              disabled={isCanvasLocked}
               variant={"ghost"}
               size={"sm"}
               className="hover:bg-mainTertiary"
@@ -61,6 +70,7 @@ const HeaderToolBox = () => {
         <Tooltip>
           <TooltipTrigger asChild>
             <Button
+              disabled={isCanvasLocked}
               variant={"ghost"}
               size={"sm"}
               className="hover:bg-mainTertiary"
@@ -79,6 +89,7 @@ const HeaderToolBox = () => {
         <Tooltip>
           <TooltipTrigger asChild>
             <Button
+              disabled={isCanvasLocked}
               variant={"ghost"}
               size={"sm"}
               className="hover:bg-mainTertiary"
@@ -97,6 +108,7 @@ const HeaderToolBox = () => {
         <Tooltip>
           <TooltipTrigger asChild>
             <Button
+              disabled={isCanvasLocked}
               variant={"ghost"}
               size={"sm"}
               className="hover:bg-mainTertiary"
@@ -115,6 +127,7 @@ const HeaderToolBox = () => {
         <Tooltip>
           <TooltipTrigger asChild>
             <Button
+              disabled={isCanvasLocked}
               variant={"ghost"}
               size={"sm"}
               className="hover:bg-mainTertiary"
@@ -133,6 +146,7 @@ const HeaderToolBox = () => {
         <Tooltip>
           <TooltipTrigger asChild>
             <Button
+              disabled={isCanvasLocked}
               variant={"ghost"}
               size={"sm"}
               className="hover:bg-mainTertiary"
@@ -151,6 +165,7 @@ const HeaderToolBox = () => {
         <Tooltip>
           <TooltipTrigger asChild>
             <Button
+              disabled={isCanvasLocked}
               variant={"ghost"}
               size={"sm"}
               className="hover:bg-mainTertiary"
@@ -171,6 +186,7 @@ const HeaderToolBox = () => {
         <Tooltip>
           <TooltipTrigger asChild>
             <Button
+              disabled={isCanvasLocked}
               variant={"ghost"}
               size={"sm"}
               className="hover:bg-mainTertiary"
@@ -189,6 +205,7 @@ const HeaderToolBox = () => {
         <Tooltip>
           <TooltipTrigger asChild>
             <Button
+              disabled={isCanvasLocked}
               variant={"ghost"}
               size={"sm"}
               className="hover:bg-mainTertiary"
@@ -207,6 +224,7 @@ const HeaderToolBox = () => {
         <Tooltip>
           <TooltipTrigger asChild>
             <Button
+              disabled={isCanvasLocked}
               variant={"ghost"}
               size={"sm"}
               className="hover:bg-mainTertiary"

@@ -30,9 +30,15 @@ export const toolkitSlice = createSlice({
     setSketchBookBackgroundColor: (state, action) => {
       state.sketchBookBackground = action.payload;
     },
+    toggleCanvasLock: (state, action) => {
+      state.isCanvasLocked = action.payload;
+    },
   },
 });
 
-export const { setStrokeColor, setSketchBookBackgroundColor } =
-  toolkitSlice.actions;
+export const {
+  setStrokeColor,
+  setSketchBookBackgroundColor,
+  toggleCanvasLock,
+} = toolkitSlice.actions;
 export default toolkitSlice.reducer;
