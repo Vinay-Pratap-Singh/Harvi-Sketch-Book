@@ -1,8 +1,11 @@
 import { configureStore } from "@reduxjs/toolkit";
+import toolkitSlice from "./toolkitSlice";
 
 export const makeStore = () => {
   return configureStore({
-    reducer: {},
+    reducer: {
+      toolkit: toolkitSlice,
+    },
   });
 };
 

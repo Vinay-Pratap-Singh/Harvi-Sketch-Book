@@ -12,7 +12,7 @@ import {
 const HeaderToolBox = () => {
   const [isLocked, setIsLocked] = useState<boolean>(false);
   return (
-    <section className="w-fit flex items-center my-5 py-2 px-4 shadow-md rounded-md space-x-2">
+    <section className="w-fit flex items-center my-5 py-2 px-4 shadow-md rounded-md space-x-2 absolute z-10">
       {/* for lock and unlock */}
       <TooltipProvider>
         <Tooltip>

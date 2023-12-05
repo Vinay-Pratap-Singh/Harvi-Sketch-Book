@@ -1,20 +1,23 @@
+import { useAppSelector } from "@/hooks/redux";
 import React from "react";
 type IColorCode = {
   colorCode: string;
   type: string;
 };
 const ColorBlocks = ({ colorCode, type }: IColorCode) => {
-  const currentStrokeColorCode = "#000000";
-  const currentCanvasColorCode = "#FFFFFF";
+  const { strokeColor, sketchBookBackground } = useAppSelector(
+    (state) => state.toolkit
+  );
+
   return (
     <div
       tabIndex={0}
       className={`rounded-[8px] w-fit cursor-pointer transition-all ease-in-out duration-300 ${
-        type === "stroke" && currentStrokeColorCode === colorCode
+        type === "stroke" && strokeColor === colorCode
           ? "border-[1px] border-mainPrimary"
           : "hover:border-[1px] hover:border-gray-300"
       } ${
-        type === "canvas" && currentCanvasColorCode === colorCode
+        type === "canvas" && sketchBookBackground === colorCode
           ? "border-[1px] border-mainPrimary"
           : "hover:border-[1px] hover:border-gray-300"
       }`}

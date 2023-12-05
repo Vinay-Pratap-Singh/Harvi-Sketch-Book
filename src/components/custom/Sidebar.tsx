@@ -18,11 +18,17 @@ import {
 import ColorBlocks from "./ColorBlocks";
 import StrokeStyleBlock from "./StrokeStyleBlock";
 import { v4 as uuidv4 } from "uuid";
+import { useAppDispatch, useAppSelector } from "@/hooks/redux";
+import {
+  setSketchBookBackgroundColor,
+  setStrokeColor,
+} from "@/redux/toolkitSlice";
 
 const Sidebar = () => {
-  const handleColorChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    console.log(event.target.value);
-  };
+  const dispatch = useAppDispatch();
+  const { strokeColor, sketchBookBackground } = useAppSelector(
+    (state) => state.toolkit
+  );
 
   return (
     <Sheet>
@@ -35,16 +41,17 @@ const Sidebar = () => {
         <div className="space-y-5">
           {/* for stroke color */}
           <div className="space-y-1">
-            <p className="text-xs">Stroke</p>
+            <p className="text-xs">Stroke color</p>
             <div className="flex items-center justify-between">
               {strokeColorCodes &&
                 strokeColorCodes.map((color) => {
                   return (
-                    <ColorBlocks
+                    <div
                       key={uuidv4()}
-                      colorCode={color}
-                      type="stroke"
-                    />
+                      onClick={() => dispatch(setStrokeColor(color))}
+                    >
+                      <ColorBlocks colorCode={color} type="stroke" />
+                    </div>
                   );
                 })}
 
@@ -59,11 +66,16 @@ const Sidebar = () => {
                   <Tooltip>
                     <TooltipTrigger asChild>
                       <Label className="cursor-pointer">
-                        <div className="w-5 h-5 bg-black rounded-[6px] m-[2px]"></div>
+                        <div
+                          style={{ backgroundColor: strokeColor }}
+                          className="w-5 h-5 rounded-[6px] m-[2px]"
+                        ></div>
                         <Input
                           type="color"
                           className="hidden"
-                          onChange={handleColorChange}
+                          onChange={(event) =>
+                            dispatch(setStrokeColor(event.target.value))
+                          }
                         />
                       </Label>
                     </TooltipTrigger>
@@ -102,11 +114,14 @@ const Sidebar = () => {
               {canvasColorCode &&
                 canvasColorCode.map((color) => {
                   return (
-                    <ColorBlocks
+                    <div
                       key={uuidv4()}
-                      colorCode={color}
-                      type="canvas"
-                    />
+                      onClick={() =>
+                        dispatch(setSketchBookBackgroundColor(color))
+                      }
+                    >
+                      <ColorBlocks colorCode={color} type="canvas" />
+                    </div>
                   );
                 })}
 
@@ -121,11 +136,18 @@ const Sidebar = () => {
                   <Tooltip>
                     <TooltipTrigger asChild>
                       <Label className="cursor-pointer">
-                        <div className="w-5 h-5 bg-white rounded-[6px] m-[2px]"></div>
+                        <div
+                          style={{ backgroundColor: sketchBookBackground }}
+                          className="w-5 h-5 rounded-[6px] m-[2px]"
+                        ></div>
                         <Input
                           type="color"
                           className="hidden"
-                          onChange={handleColorChange}
+                          onChange={(event) => {
+                            dispatch(
+                              setSketchBookBackgroundColor(event.target.value)
+                            );
+                          }}
                         />
                       </Label>
                     </TooltipTrigger>
