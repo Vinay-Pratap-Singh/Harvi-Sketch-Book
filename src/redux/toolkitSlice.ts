@@ -32,6 +32,12 @@ export const toolkitSlice = createSlice({
     },
     toggleCanvasLock: (state, action) => {
       state.isCanvasLocked = action.payload;
+      if (state.isCanvasLocked) {
+        state.currentShape = null;
+      }
+    },
+    setCurrentShape: (state, action) => {
+      state.currentShape = action.payload;
     },
   },
 });
@@ -40,5 +46,6 @@ export const {
   setStrokeColor,
   setSketchBookBackgroundColor,
   toggleCanvasLock,
+  setCurrentShape,
 } = toolkitSlice.actions;
 export default toolkitSlice.reducer;

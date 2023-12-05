@@ -9,14 +9,16 @@ import {
   TooltipTrigger,
 } from "../ui/tooltip";
 import { useAppDispatch, useAppSelector } from "@/hooks/redux";
-import { toggleCanvasLock } from "@/redux/toolkitSlice";
+import { setCurrentShape, toggleCanvasLock } from "@/redux/toolkitSlice";
 
 const HeaderToolBox = () => {
   const dispatch = useAppDispatch();
-  const { isCanvasLocked } = useAppSelector((state) => state.toolkit);
+  const { isCanvasLocked, currentShape } = useAppSelector(
+    (state) => state.toolkit
+  );
 
   return (
-    <section className="w-fit flex items-center my-5 py-2 px-4 shadow-md rounded-md space-x-2 absolute z-10 bg-transparent">
+    <section className="w-fit flex items-center my-5 py-2 px-4 shadow-md rounded-md space-x-2 absolute z-10">
       {/* for lock and unlock */}
       <TooltipProvider>
         <Tooltip>
@@ -24,7 +26,11 @@ const HeaderToolBox = () => {
             <Button
               variant={"ghost"}
               size={"sm"}
-              className="hover:bg-mainTertiary"
+              className={` ${
+                isCanvasLocked
+                  ? "bg-mainPrimary hover:bg-mainPrimary text-white hover:text-white"
+                  : "hover:bg-mainTertiary"
+              }`}
               onClick={() => {
                 dispatch(toggleCanvasLock(!isCanvasLocked));
               }}
@@ -54,7 +60,12 @@ const HeaderToolBox = () => {
               disabled={isCanvasLocked}
               variant={"ghost"}
               size={"sm"}
-              className="hover:bg-mainTertiary"
+              className={` ${
+                currentShape === "square"
+                  ? "bg-mainPrimary hover:bg-mainPrimary text-white hover:text-white"
+                  : "hover:bg-mainTertiary"
+              }`}
+              onClick={() => dispatch(setCurrentShape("square"))}
             >
               <i className="fa-regular fa-square" />
             </Button>
@@ -73,7 +84,12 @@ const HeaderToolBox = () => {
               disabled={isCanvasLocked}
               variant={"ghost"}
               size={"sm"}
-              className="hover:bg-mainTertiary"
+              className={` ${
+                currentShape === "circle"
+                  ? "bg-mainPrimary hover:bg-mainPrimary text-white hover:text-white"
+                  : "hover:bg-mainTertiary"
+              }`}
+              onClick={() => dispatch(setCurrentShape("circle"))}
             >
               <i className="fa-regular fa-circle" />
             </Button>
@@ -92,7 +108,12 @@ const HeaderToolBox = () => {
               disabled={isCanvasLocked}
               variant={"ghost"}
               size={"sm"}
-              className="hover:bg-mainTertiary"
+              className={` ${
+                currentShape === "arrow"
+                  ? "bg-mainPrimary hover:bg-mainPrimary text-white hover:text-white"
+                  : "hover:bg-mainTertiary"
+              }`}
+              onClick={() => dispatch(setCurrentShape("arrow"))}
             >
               <i className="fa-solid fa-arrow-right" />
             </Button>
@@ -111,7 +132,12 @@ const HeaderToolBox = () => {
               disabled={isCanvasLocked}
               variant={"ghost"}
               size={"sm"}
-              className="hover:bg-mainTertiary"
+              className={` ${
+                currentShape === "line"
+                  ? "bg-mainPrimary hover:bg-mainPrimary text-white hover:text-white"
+                  : "hover:bg-mainTertiary"
+              }`}
+              onClick={() => dispatch(setCurrentShape("line"))}
             >
               <i className="fa-solid fa-minus" />
             </Button>
@@ -130,7 +156,12 @@ const HeaderToolBox = () => {
               disabled={isCanvasLocked}
               variant={"ghost"}
               size={"sm"}
-              className="hover:bg-mainTertiary"
+              className={` ${
+                currentShape === "text"
+                  ? "bg-mainPrimary hover:bg-mainPrimary text-white hover:text-white"
+                  : "hover:bg-mainTertiary"
+              }`}
+              onClick={() => dispatch(setCurrentShape("text"))}
             >
               <i className="fa-solid fa-font" />
             </Button>
@@ -149,7 +180,12 @@ const HeaderToolBox = () => {
               disabled={isCanvasLocked}
               variant={"ghost"}
               size={"sm"}
-              className="hover:bg-mainTertiary"
+              className={` ${
+                currentShape === "image"
+                  ? "bg-mainPrimary hover:bg-mainPrimary text-white hover:text-white"
+                  : "hover:bg-mainTertiary"
+              }`}
+              onClick={() => dispatch(setCurrentShape("image"))}
             >
               <i className="fa-regular fa-image" />
             </Button>
@@ -168,7 +204,12 @@ const HeaderToolBox = () => {
               disabled={isCanvasLocked}
               variant={"ghost"}
               size={"sm"}
-              className="hover:bg-mainTertiary"
+              className={` ${
+                currentShape === "pencil"
+                  ? "bg-mainPrimary hover:bg-mainPrimary text-white hover:text-white"
+                  : "hover:bg-mainTertiary"
+              }`}
+              onClick={() => dispatch(setCurrentShape("pencil"))}
             >
               <i className="fa-solid fa-pencil" />
             </Button>
@@ -227,7 +268,12 @@ const HeaderToolBox = () => {
               disabled={isCanvasLocked}
               variant={"ghost"}
               size={"sm"}
-              className="hover:bg-mainTertiary"
+              className={` ${
+                currentShape === "eraser"
+                  ? "bg-mainPrimary hover:bg-mainPrimary text-white hover:text-white"
+                  : "hover:bg-mainTertiary"
+              }`}
+              onClick={() => dispatch(setCurrentShape("eraser"))}
             >
               <i className="fa-solid fa-eraser" />
             </Button>

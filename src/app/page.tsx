@@ -7,10 +7,8 @@ export default function Home() {
   return (
     <div className="flex justify-center">
       <HeaderToolBox />
-      <div className="flex flex-col">
-        <Sidebar />
-        <SketchBoard />
-      </div>
+      <Sidebar />
+      <SketchBoard />
     </div>
   );
 }
