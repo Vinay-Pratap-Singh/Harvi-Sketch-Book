@@ -10,12 +10,14 @@ type IColorCode = {
 };
 const ColorBlocks = ({ colorCode, type }: IColorCode) => {
   const dispatch = useAppDispatch();
-  const { strokeColor, sketchBookBackground } = useAppSelector(
+  const { strokeColor, sketchBookBackground, currentShape } = useAppSelector(
     (state) => state.toolkit
   );
 
   // function to dispatch color change
   const dispatchColorChange = () => {
+    if (currentShape === "eraser") return;
+
     if (type === "stroke") {
       dispatch(setStrokeColor(colorCode));
     } else if (type === "canvas") {

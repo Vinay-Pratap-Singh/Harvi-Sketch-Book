@@ -32,7 +32,7 @@ const SketchBoard = () => {
 
   // to draw using pencil
   useEffect(() => {
-    if (currentShape !== "pencil") return;
+    if (currentShape !== "pencil" && currentShape !== "eraser") return;
 
     const canvas = canvasRef.current;
     if (canvas) {

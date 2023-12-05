@@ -9,11 +9,16 @@ import {
   TooltipTrigger,
 } from "../ui/tooltip";
 import { useAppDispatch, useAppSelector } from "@/hooks/redux";
-import { setCurrentShape, toggleCanvasLock } from "@/redux/toolkitSlice";
+import {
+  setCurrentShape,
+  setStrokeColor,
+  setStrokeWidth,
+  toggleCanvasLock,
+} from "@/redux/toolkitSlice";
 
 const HeaderToolBox = () => {
   const dispatch = useAppDispatch();
-  const { isCanvasLocked, currentShape } = useAppSelector(
+  const { isCanvasLocked, currentShape, sketchBookBackground } = useAppSelector(
     (state) => state.toolkit
   );
 
@@ -209,7 +214,11 @@ const HeaderToolBox = () => {
                   ? "bg-mainPrimary hover:bg-mainPrimary text-white hover:text-white"
                   : "hover:bg-mainTertiary"
               }`}
-              onClick={() => dispatch(setCurrentShape("pencil"))}
+              onClick={() => {
+                dispatch(setCurrentShape("pencil"));
+                dispatch(setStrokeColor("#000000"));
+                dispatch(setStrokeWidth(1));
+              }}
             >
               <i className="fa-solid fa-pencil" />
             </Button>
@@ -273,7 +282,10 @@ const HeaderToolBox = () => {
                   ? "bg-mainPrimary hover:bg-mainPrimary text-white hover:text-white"
                   : "hover:bg-mainTertiary"
               }`}
-              onClick={() => dispatch(setCurrentShape("eraser"))}
+              onClick={() => {
+                dispatch(setCurrentShape("eraser"));
+                dispatch(setStrokeColor(sketchBookBackground));
+              }}
             >
               <i className="fa-solid fa-eraser" />
             </Button>

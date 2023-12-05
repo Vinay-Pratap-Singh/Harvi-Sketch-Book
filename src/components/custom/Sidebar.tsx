@@ -29,9 +29,8 @@ import LineStrokeBlock from "./LineStrokeBlock";
 
 const Sidebar = () => {
   const dispatch = useAppDispatch();
-  const { strokeColor, sketchBookBackground, strokeWidth } = useAppSelector(
-    (state) => state.toolkit
-  );
+  const { strokeColor, sketchBookBackground, strokeWidth, currentShape } =
+    useAppSelector((state) => state.toolkit);
 
   return (
     <Sheet>
@@ -92,12 +91,14 @@ const Sidebar = () => {
 
           {/* for stroke width */}
           <div className="space-y-1">
-            <p className="text-xs">Stroke width</p>
+            <p className="text-xs">
+              {currentShape === "eraser" ? "Eraser size" : "Stroke width"}
+            </p>
             <div>
               <Input
                 type="range"
                 min={1}
-                max={20}
+                max={currentShape === "eraser" ? 100 : 20}
                 className="h-4"
                 value={strokeWidth}
                 onChange={(event) => {
