@@ -1,3 +1,4 @@
+import { ILineStroke } from "@/helper/interface/interface";
 import { createSlice } from "@reduxjs/toolkit";
 
 type IInitialState = {
@@ -5,8 +6,8 @@ type IInitialState = {
   currentShape: string | null;
   currentOperation: string | null;
   strokeColor: string;
-  strokeWidth: string;
-  strokeStyle: string;
+  strokeWidth: number;
+  strokeStyle: ILineStroke;
   sketchBookBackground: string;
 };
 
@@ -15,8 +16,12 @@ const initialState: IInitialState = {
   currentShape: null,
   currentOperation: null,
   strokeColor: "#000000",
-  strokeWidth: "",
-  strokeStyle: "normal",
+  strokeWidth: 1,
+  strokeStyle: {
+    name: "normal",
+    content: "-",
+    value: null,
+  },
   sketchBookBackground: "#FFFFFF",
 };
 
@@ -39,6 +44,12 @@ export const toolkitSlice = createSlice({
     setCurrentShape: (state, action) => {
       state.currentShape = action.payload;
     },
+    setStrokeWidth: (state, action) => {
+      state.strokeWidth = action.payload;
+    },
+    setStrokeStyle: (state, action) => {
+      state.strokeStyle = { ...action.payload };
+    },
   },
 });
 
@@ -47,5 +58,7 @@ export const {
   setSketchBookBackgroundColor,
   toggleCanvasLock,
   setCurrentShape,
+  setStrokeWidth,
+  setStrokeStyle,
 } = toolkitSlice.actions;
 export default toolkitSlice.reducer;

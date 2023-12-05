@@ -10,23 +10,26 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "../ui/tooltip";
-import {
-  canvasColorCode,
-  strokeColorCodes,
-  strokeStyle,
-} from "@/constants/constants";
+
 import ColorBlocks from "./ColorBlocks";
-import StrokeStyleBlock from "./StrokeStyleBlock";
 import { v4 as uuidv4 } from "uuid";
 import { useAppDispatch, useAppSelector } from "@/hooks/redux";
 import {
   setSketchBookBackgroundColor,
   setStrokeColor,
+  setStrokeWidth,
 } from "@/redux/toolkitSlice";
+import {
+  CANVAS_BG_COLOR_CODE,
+  STROKE_LINE_STYLE,
+  STROKE_STYLE_COLOR_CODE,
+} from "@/constants/constants";
+import { ILineStroke } from "@/helper/interface/interface";
+import LineStrokeBlock from "./LineStrokeBlock";
 
 const Sidebar = () => {
   const dispatch = useAppDispatch();
-  const { strokeColor, sketchBookBackground } = useAppSelector(
+  const { strokeColor, sketchBookBackground, strokeWidth } = useAppSelector(
     (state) => state.toolkit
   );
 
@@ -43,15 +46,14 @@ const Sidebar = () => {
           <div className="space-y-1">
             <p className="text-xs">Stroke color</p>
             <div className="flex items-center justify-between">
-              {strokeColorCodes &&
-                strokeColorCodes.map((color) => {
+              {STROKE_STYLE_COLOR_CODE &&
+                STROKE_STYLE_COLOR_CODE.map((color) => {
                   return (
-                    <div
+                    <ColorBlocks
                       key={uuidv4()}
-                      onClick={() => dispatch(setStrokeColor(color))}
-                    >
-                      <ColorBlocks colorCode={color} type="stroke" />
-                    </div>
+                      colorCode={color}
+                      type="stroke"
+                    />
                   );
                 })}
 
@@ -92,7 +94,16 @@ const Sidebar = () => {
           <div className="space-y-1">
             <p className="text-xs">Stroke width</p>
             <div>
-              <Input type="range" className="h-4" />
+              <Input
+                type="range"
+                min={1}
+                max={20}
+                className="h-4"
+                value={strokeWidth}
+                onChange={(event) => {
+                  dispatch(setStrokeWidth(Number(event.target.value)));
+                }}
+              />
             </div>
           </div>
 
@@ -100,9 +111,9 @@ const Sidebar = () => {
           <div className="space-y-1">
             <p className="text-xs">Stroke style</p>
             <div className="flex items-center gap-2">
-              {strokeStyle &&
-                Object.entries(strokeStyle).map(([key, val]) => {
-                  return <StrokeStyleBlock key={key} strokeType={val} />;
+              {STROKE_LINE_STYLE &&
+                STROKE_LINE_STYLE.map((stroke: ILineStroke) => {
+                  return <LineStrokeBlock key={uuidv4()} data={stroke} />;
                 })}
             </div>
           </div>
@@ -111,17 +122,14 @@ const Sidebar = () => {
           <div className="space-y-1">
             <p className="text-xs">Sketch book background</p>
             <div className="flex items-center justify-between">
-              {canvasColorCode &&
-                canvasColorCode.map((color) => {
+              {CANVAS_BG_COLOR_CODE &&
+                CANVAS_BG_COLOR_CODE.map((color) => {
                   return (
-                    <div
+                    <ColorBlocks
                       key={uuidv4()}
-                      onClick={() =>
-                        dispatch(setSketchBookBackgroundColor(color))
-                      }
-                    >
-                      <ColorBlocks colorCode={color} type="canvas" />
-                    </div>
+                      colorCode={color}
+                      type="canvas"
+                    />
                   );
                 })}
 

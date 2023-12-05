@@ -4,9 +4,13 @@ import React, { useEffect, useRef, useState } from "react";
 
 const SketchBoard = () => {
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
-  const { sketchBookBackground, currentShape, strokeColor } = useAppSelector(
-    (state) => state.toolkit
-  );
+  const {
+    sketchBookBackground,
+    currentShape,
+    strokeColor,
+    strokeWidth,
+    strokeStyle,
+  } = useAppSelector((state) => state.toolkit);
   const [isDrawing, setIsDrawing] = useState<boolean>(false);
 
   // setting default width and height for canvas
@@ -48,6 +52,10 @@ const SketchBoard = () => {
         if (!isDrawing) return;
         if (context) {
           context.strokeStyle = strokeColor;
+          context.lineWidth = strokeWidth;
+          strokeStyle.name === "normal"
+            ? context.setLineDash([])
+            : context.setLineDash([strokeStyle.value ? strokeStyle.value : 0]);
           context.lineTo(
             event.clientX - canvas.offsetLeft,
             event.clientY - canvas.offsetTop
@@ -73,7 +81,7 @@ const SketchBoard = () => {
         canvas.removeEventListener("mouseup", stopDrawing);
       };
     }
-  }, [isDrawing, currentShape, strokeColor]);
+  }, [isDrawing, currentShape, strokeColor, strokeWidth, strokeStyle]);
 
   return <canvas ref={canvasRef}></canvas>;
 };

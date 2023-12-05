@@ -1,13 +1,27 @@
-import { useAppSelector } from "@/hooks/redux";
+import { useAppDispatch, useAppSelector } from "@/hooks/redux";
+import {
+  setSketchBookBackgroundColor,
+  setStrokeColor,
+} from "@/redux/toolkitSlice";
 import React from "react";
 type IColorCode = {
   colorCode: string;
   type: string;
 };
 const ColorBlocks = ({ colorCode, type }: IColorCode) => {
+  const dispatch = useAppDispatch();
   const { strokeColor, sketchBookBackground } = useAppSelector(
     (state) => state.toolkit
   );
+
+  // function to dispatch color change
+  const dispatchColorChange = () => {
+    if (type === "stroke") {
+      dispatch(setStrokeColor(colorCode));
+    } else if (type === "canvas") {
+      dispatch(setSketchBookBackgroundColor(colorCode));
+    }
+  };
 
   return (
     <div
@@ -21,6 +35,7 @@ const ColorBlocks = ({ colorCode, type }: IColorCode) => {
           ? "border-[1px] border-mainPrimary"
           : "hover:border-[1px] hover:border-gray-300"
       }`}
+      onClick={dispatchColorChange}
     >
       <div
         style={{ backgroundColor: colorCode }}

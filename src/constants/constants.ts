@@ -1,4 +1,6 @@
-export const strokeColorCodes = [
+import { ILineStroke } from "@/helper/interface/interface";
+
+export const STROKE_STYLE_COLOR_CODE = [
   "#000000",
   "#ef4444",
   "#22c55e",
@@ -7,7 +9,7 @@ export const strokeColorCodes = [
   "#6366f1",
 ];
 
-export const canvasColorCode = [
+export const CANVAS_BG_COLOR_CODE = [
   "#FFFFFF",
   "#F8F9FA",
   "#F5FAFF",
@@ -15,7 +17,20 @@ export const canvasColorCode = [
   "#FDF8F6",
 ];
 
-export const strokeStyle = {
-  primary: "PLAIN",
-  secondary: "DASHED",
-};
+export const STROKE_LINE_STYLE: ILineStroke[] = [
+  {
+    name: "normal",
+    content: "-",
+    value: null,
+  },
+  {
+    name: "dotted",
+    content: "&middot;",
+    value: 2,
+  },
+  {
+    name: "dashed",
+    content: "--",
+    value: 10,
+  },
+];
