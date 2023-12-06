@@ -2,6 +2,7 @@ import { ILineStroke } from "@/helper/interface/interface";
 import { useAppDispatch, useAppSelector } from "@/hooks/redux";
 import { setStrokeStyle } from "@/redux/toolkitSlice";
 import React from "react";
+import { useToast } from "../ui/use-toast";
 
 type IProps = {
   data: ILineStroke;
@@ -9,7 +10,10 @@ type IProps = {
 
 const LineStrokeBlock = ({ data }: IProps) => {
   const dispatch = useAppDispatch();
-  const { strokeStyle } = useAppSelector((state) => state.toolkit);
+  const { strokeStyle, currentShape } = useAppSelector(
+    (state) => state.toolkit
+  );
+  const { toast } = useToast();
 
   return (
     <div
@@ -19,7 +23,15 @@ const LineStrokeBlock = ({ data }: IProps) => {
           ? " border-mainPrimary"
           : " border-gray-200"
       }`}
-      onClick={() => dispatch(setStrokeStyle(data))}
+      onClick={() => {
+        if (currentShape === "eraser") {
+          toast({
+            description: "Feature disabled while using eraser",
+          });
+          return;
+        }
+        dispatch(setStrokeStyle(data));
+      }}
     >
       <div
         className={`w-6 h-6 rounded-[6px] m-[2px] flex items-center justify-center ${

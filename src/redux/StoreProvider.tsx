@@ -2,6 +2,7 @@
 import { useRef } from "react";
 import { Provider } from "react-redux";
 import { AppStore, makeStore } from "./store";
+import { Toaster } from "@/components/ui/toaster";
 
 export default function StoreProvider({
   children,
@@ -14,5 +15,10 @@ export default function StoreProvider({
     storeRef.current = makeStore();
   }
 
-  return <Provider store={storeRef.current}>{children}</Provider>;
+  return (
+    <Provider store={storeRef.current}>
+      <Toaster />
+      {children}
+    </Provider>
+  );
 }

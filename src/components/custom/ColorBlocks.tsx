@@ -4,6 +4,7 @@ import {
   setStrokeColor,
 } from "@/redux/toolkitSlice";
 import React from "react";
+import { toast } from "../ui/use-toast";
 type IColorCode = {
   colorCode: string;
   type: string;
@@ -16,7 +17,12 @@ const ColorBlocks = ({ colorCode, type }: IColorCode) => {
 
   // function to dispatch color change
   const dispatchColorChange = () => {
-    if (currentShape === "eraser") return;
+    if (currentShape === "eraser") {
+      toast({
+        description: "Feature disabled while using eraser",
+      });
+      return;
+    }
 
     if (type === "stroke") {
       dispatch(setStrokeColor(colorCode));

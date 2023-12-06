@@ -12,6 +12,7 @@ import { useAppDispatch, useAppSelector } from "@/hooks/redux";
 import {
   setCurrentShape,
   setStrokeColor,
+  setStrokeStyle,
   setStrokeWidth,
   toggleCanvasLock,
 } from "@/redux/toolkitSlice";
@@ -285,6 +286,13 @@ const HeaderToolBox = () => {
               onClick={() => {
                 dispatch(setCurrentShape("eraser"));
                 dispatch(setStrokeColor(sketchBookBackground));
+                dispatch(
+                  setStrokeStyle({
+                    name: "normal",
+                    content: "-",
+                    value: null,
+                  })
+                );
               }}
             >
               <i className="fa-solid fa-eraser" />
