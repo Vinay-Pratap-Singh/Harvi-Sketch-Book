@@ -99,7 +99,11 @@ const HeaderToolBox = () => {
                   ? "bg-mainPrimary hover:bg-mainPrimary text-white hover:text-white"
                   : "hover:bg-mainTertiary"
               }`}
-              onClick={() => dispatch(setCurrentShape("circle"))}
+              onClick={() => {
+                dispatch(setCurrentShape("circle"));
+                dispatch(setStrokeColor("#000000"));
+                dispatch(setStrokeWidth(1));
+              }}
             >
               <i className="fa-regular fa-circle" />
             </Button>

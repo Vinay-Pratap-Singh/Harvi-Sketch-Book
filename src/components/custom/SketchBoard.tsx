@@ -39,7 +39,7 @@ const SketchBoard = () => {
     }
   }, [sketchBookBackground]);
 
-  // to draw using pencil
+  // to draw different shapes
   useEffect(() => {
     const canvas = canvasRef.current;
     if (!canvas) return;
@@ -133,6 +133,58 @@ const SketchBoard = () => {
 
         const stopDrawing = () => {
           isDrawing.current = false;
+        };
+
+        canvas.addEventListener("mousedown", startDrawing);
+        canvas.addEventListener("mousemove", draw);
+        canvas.addEventListener("mouseup", stopDrawing);
+
+        return () => {
+          canvas.removeEventListener("mousedown", startDrawing);
+          canvas.removeEventListener("mousemove", draw);
+          canvas.removeEventListener("mouseup", stopDrawing);
+        };
+      }
+
+      case "circle": {
+        const coordinate = {
+          startCoordinate: { x: 0, y: 0 },
+          endCoordinate: { x: 0, y: 0 },
+        };
+
+        const startDrawing = (event: MouseEvent) => {
+          isDrawing.current = true;
+          coordinate.startCoordinate = {
+            x: event.clientX - canvas.offsetLeft,
+            y: event.clientY - canvas.offsetTop,
+          };
+        };
+
+        const draw = (event: MouseEvent) => {
+          if (!isDrawing.current) return;
+
+          coordinate.endCoordinate = {
+            x: event.clientX - canvas.offsetLeft,
+            y: event.clientY - canvas.offsetTop,
+          };
+        };
+
+        const stopDrawing = () => {
+          isDrawing.current = false;
+          const { x: startX, y: startY } = coordinate.startCoordinate;
+          const { x: endX, y: endY } = coordinate.endCoordinate;
+          const radius = Math.sqrt(
+            Math.pow(endX - startX, 2) + Math.pow(endY - startY, 2)
+          );
+
+          context.strokeStyle = strokeColor;
+          context.fillStyle = currentShapeFillColor;
+          context.lineWidth = strokeWidth;
+          context.beginPath();
+          context.arc(startX, startY, radius, 0, 2 * Math.PI);
+          context.stroke();
+          context.fill();
+          context.closePath();
         };
 
         canvas.addEventListener("mousedown", startDrawing);
