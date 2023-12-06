@@ -127,7 +127,11 @@ const HeaderToolBox = () => {
                   ? "bg-mainPrimary hover:bg-mainPrimary text-white hover:text-white"
                   : "hover:bg-mainTertiary"
               }`}
-              onClick={() => dispatch(setCurrentShape("arrow"))}
+              onClick={() => {
+                dispatch(setCurrentShape("arrow"));
+                dispatch(setStrokeColor("#000000"));
+                dispatch(setStrokeWidth(1));
+              }}
             >
               <i className="fa-solid fa-arrow-right" />
             </Button>

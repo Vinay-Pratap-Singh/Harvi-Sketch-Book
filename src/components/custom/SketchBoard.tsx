@@ -198,6 +198,73 @@ const SketchBoard = () => {
         };
       }
 
+      case "arrow": {
+        const coordinate = {
+          startCoordinate: { x: 0, y: 0 },
+          endCoordinate: { x: 0, y: 0 },
+        };
+
+        const startDrawing = (event: MouseEvent) => {
+          isDrawing.current = true;
+          coordinate.startCoordinate = {
+            x: event.clientX - canvas.offsetLeft,
+            y: event.clientY - canvas.offsetTop,
+          };
+        };
+
+        const draw = (event: MouseEvent) => {
+          if (!isDrawing.current) return;
+
+          coordinate.endCoordinate = {
+            x: event.clientX - canvas.offsetLeft,
+            y: event.clientY - canvas.offsetTop,
+          };
+        };
+
+        const stopDrawing = () => {
+          isDrawing.current = false;
+          const { x: startX, y: startY } = coordinate.startCoordinate;
+          const { x: endX, y: endY } = coordinate.endCoordinate;
+
+          // Draw the arrow
+          context.beginPath();
+          context.moveTo(startX, startY);
+          context.lineTo(endX, endY);
+          context.lineWidth = strokeWidth;
+          context.strokeStyle = strokeColor;
+          context.stroke();
+
+          const angle = Math.atan2(endY - startY, endX - startX);
+          const arrowSize =
+            strokeWidth < 10 ? strokeWidth + 15 : strokeWidth + 30;
+
+          // Calculate positions for both sides of the arrowhead
+          const arrowLeftX = endX - arrowSize * Math.cos(angle + Math.PI / 6);
+          const arrowLeftY = endY - arrowSize * Math.sin(angle + Math.PI / 6);
+          const arrowRightX = endX - arrowSize * Math.cos(angle - Math.PI / 6);
+          const arrowRightY = endY - arrowSize * Math.sin(angle - Math.PI / 6);
+
+          // Draw the arrowhead
+          context.beginPath();
+          context.moveTo(arrowLeftX, arrowLeftY);
+          context.lineTo(endX, endY);
+          context.lineTo(arrowRightX, arrowRightY);
+          context.closePath();
+          context.fillStyle = strokeColor;
+          context.fill();
+        };
+
+        canvas.addEventListener("mousedown", startDrawing);
+        canvas.addEventListener("mousemove", draw);
+        canvas.addEventListener("mouseup", stopDrawing);
+
+        return () => {
+          canvas.removeEventListener("mousedown", startDrawing);
+          canvas.removeEventListener("mousemove", draw);
+          canvas.removeEventListener("mouseup", stopDrawing);
+        };
+      }
+
       default:
         break;
     }
