@@ -26,6 +26,7 @@ import {
 } from "@/constants/constants";
 import { ILineStroke } from "@/helper/interface/interface";
 import LineStrokeBlock from "./LineStrokeBlock";
+import { toast } from "../ui/use-toast";
 
 const Sidebar = () => {
   const dispatch = useAppDispatch();
@@ -74,9 +75,16 @@ const Sidebar = () => {
                         <Input
                           type="color"
                           className="hidden"
-                          onChange={(event) =>
-                            dispatch(setStrokeColor(event.target.value))
-                          }
+                          onChange={(event) => {
+                            if (currentShape === "eraser") {
+                              toast({
+                                description:
+                                  "Feature disabled while using eraser",
+                              });
+                              return;
+                            }
+                            dispatch(setStrokeColor(event.target.value));
+                          }}
                         />
                       </Label>
                     </TooltipTrigger>
@@ -153,6 +161,13 @@ const Sidebar = () => {
                           type="color"
                           className="hidden"
                           onChange={(event) => {
+                            if (currentShape === "eraser") {
+                              toast({
+                                description:
+                                  "Feature disabled while using eraser",
+                              });
+                              return;
+                            }
                             dispatch(
                               setSketchBookBackgroundColor(event.target.value)
                             );

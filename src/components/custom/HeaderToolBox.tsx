@@ -71,7 +71,11 @@ const HeaderToolBox = () => {
                   ? "bg-mainPrimary hover:bg-mainPrimary text-white hover:text-white"
                   : "hover:bg-mainTertiary"
               }`}
-              onClick={() => dispatch(setCurrentShape("square"))}
+              onClick={() => {
+                dispatch(setCurrentShape("square"));
+                dispatch(setStrokeColor("#000000"));
+                dispatch(setStrokeWidth(1));
+              }}
             >
               <i className="fa-regular fa-square" />
             </Button>
