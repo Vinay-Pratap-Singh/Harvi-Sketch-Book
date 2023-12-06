@@ -1,6 +1,6 @@
 import { ILineStroke } from "@/helper/interface/interface";
 
-export const STROKE_STYLE_COLOR_CODE = [
+export const STROKE_STYLE_COLOR_CODE: string[] = [
   "#000000",
   "#ef4444",
   "#22c55e",
@@ -9,7 +9,7 @@ export const STROKE_STYLE_COLOR_CODE = [
   "#6366f1",
 ];
 
-export const CANVAS_BG_COLOR_CODE = [
+export const CANVAS_BG_COLOR_CODE: string[] = [
   "#FFFFFF",
   "#F8F9FA",
   "#F5FAFF",

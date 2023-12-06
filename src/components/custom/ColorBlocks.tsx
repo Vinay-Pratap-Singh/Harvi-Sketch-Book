@@ -1,5 +1,6 @@
 import { useAppDispatch, useAppSelector } from "@/hooks/redux";
 import {
+  setShapeFillColor,
   setSketchBookBackgroundColor,
   setStrokeColor,
 } from "@/redux/toolkitSlice";
@@ -11,9 +12,8 @@ type IColorCode = {
 };
 const ColorBlocks = ({ colorCode, type }: IColorCode) => {
   const dispatch = useAppDispatch();
-  const { strokeColor, sketchBookBackground, currentShape } = useAppSelector(
-    (state) => state.toolkit
-  );
+  const { strokeColor, sketchBookBackground, currentShape, shapeFillColor } =
+    useAppSelector((state) => state.toolkit);
 
   // function to dispatch color change
   const dispatchColorChange = () => {
@@ -28,6 +28,8 @@ const ColorBlocks = ({ colorCode, type }: IColorCode) => {
       dispatch(setStrokeColor(colorCode));
     } else if (type === "canvas") {
       dispatch(setSketchBookBackgroundColor(colorCode));
+    } else if (type === "shapeFill") {
+      dispatch(setShapeFillColor(colorCode));
     }
   };
 
@@ -40,6 +42,10 @@ const ColorBlocks = ({ colorCode, type }: IColorCode) => {
           : "hover:border-[1px] hover:border-gray-300"
       } ${
         type === "canvas" && sketchBookBackground === colorCode
+          ? "border-[1px] border-mainPrimary"
+          : "hover:border-[1px] hover:border-gray-300"
+      } ${
+        type === "shapeFill" && shapeFillColor === colorCode
           ? "border-[1px] border-mainPrimary"
           : "hover:border-[1px] hover:border-gray-300"
       }`}

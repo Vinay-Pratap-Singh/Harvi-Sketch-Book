@@ -1,17 +1,26 @@
 import { applySketchBookBackgroundColor } from "@/helper/canvas/canvas";
 import { useAppSelector } from "@/hooks/redux";
-import React, { useEffect, useRef, useState } from "react";
+import useHexToRgba from "@/hooks/useHexToRgba";
+import React, {
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 
 const SketchBoard = () => {
-  const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const {
     sketchBookBackground,
     currentShape,
     strokeColor,
     strokeWidth,
     strokeStyle,
+    shapeFillColor,
   } = useAppSelector((state) => state.toolkit);
+  const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const isDrawing = useRef(false);
+  const currentShapeFillColor = useHexToRgba(shapeFillColor);
 
   // setting default width and height for canvas
   useEffect(() => {
@@ -93,18 +102,19 @@ const SketchBoard = () => {
           endCoordinate: { x: 0, y: 0 },
         };
 
-        const handleMouseDown = (event: MouseEvent) => {
+        const startDrawing = (event: MouseEvent) => {
           isDrawing.current = true;
           coordinate.startCoordinate = { x: event.clientX, y: event.clientY };
         };
 
-        const handleMouseMove = (event: MouseEvent) => {
+        const draw = (event: MouseEvent) => {
           if (!isDrawing.current) return;
           coordinate.endCoordinate = { x: event.clientX, y: event.clientY };
           const { x: startX, y: startY } = coordinate.startCoordinate;
           const { x: endX, y: endY } = coordinate.endCoordinate;
 
           context.strokeStyle = strokeColor;
+          context.fillStyle = currentShapeFillColor;
           context.lineWidth = strokeWidth;
           context.fillRect(
             Math.min(startX, endX),
@@ -121,25 +131,33 @@ const SketchBoard = () => {
           );
         };
 
-        const handleMouseUp = () => {
+        const stopDrawing = () => {
           isDrawing.current = false;
         };
 
-        canvas.addEventListener("mousedown", handleMouseDown);
-        canvas.addEventListener("mousemove", handleMouseMove);
-        canvas.addEventListener("mouseup", handleMouseUp);
+        canvas.addEventListener("mousedown", startDrawing);
+        canvas.addEventListener("mousemove", draw);
+        canvas.addEventListener("mouseup", stopDrawing);
 
         return () => {
-          canvas.removeEventListener("mousedown", handleMouseDown);
-          canvas.removeEventListener("mousemove", handleMouseMove);
-          canvas.removeEventListener("mouseup", handleMouseUp);
+          canvas.removeEventListener("mousedown", startDrawing);
+          canvas.removeEventListener("mousemove", draw);
+          canvas.removeEventListener("mouseup", stopDrawing);
         };
       }
 
       default:
         break;
     }
-  }, [isDrawing, currentShape, strokeColor, strokeWidth, strokeStyle]);
+  }, [
+    isDrawing,
+    currentShape,
+    strokeColor,
+    strokeWidth,
+    strokeStyle,
+    shapeFillColor,
+    currentShapeFillColor,
+  ]);
 
   return <canvas ref={canvasRef}></canvas>;
 };

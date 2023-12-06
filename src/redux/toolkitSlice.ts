@@ -9,6 +9,7 @@ type IInitialState = {
   strokeWidth: number;
   strokeStyle: ILineStroke;
   sketchBookBackground: string;
+  shapeFillColor: string;
 };
 
 const initialState: IInitialState = {
@@ -23,6 +24,7 @@ const initialState: IInitialState = {
     value: null,
   },
   sketchBookBackground: "#FFFFFF",
+  shapeFillColor: "#FFFFFF",
 };
 
 export const toolkitSlice = createSlice({
@@ -34,6 +36,10 @@ export const toolkitSlice = createSlice({
     },
     setSketchBookBackgroundColor: (state, action) => {
       state.sketchBookBackground = action.payload;
+      state.shapeFillColor = action.payload;
+    },
+    setShapeFillColor: (state, action) => {
+      state.shapeFillColor = action.payload;
     },
     toggleCanvasLock: (state, action) => {
       state.isCanvasLocked = action.payload;
@@ -60,5 +66,6 @@ export const {
   setCurrentShape,
   setStrokeWidth,
   setStrokeStyle,
+  setShapeFillColor,
 } = toolkitSlice.actions;
 export default toolkitSlice.reducer;

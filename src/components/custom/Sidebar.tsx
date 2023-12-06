@@ -15,6 +15,7 @@ import ColorBlocks from "./ColorBlocks";
 import { v4 as uuidv4 } from "uuid";
 import { useAppDispatch, useAppSelector } from "@/hooks/redux";
 import {
+  setShapeFillColor,
   setSketchBookBackgroundColor,
   setStrokeColor,
   setStrokeWidth,
@@ -30,8 +31,13 @@ import { toast } from "../ui/use-toast";
 
 const Sidebar = () => {
   const dispatch = useAppDispatch();
-  const { strokeColor, sketchBookBackground, strokeWidth, currentShape } =
-    useAppSelector((state) => state.toolkit);
+  const {
+    strokeColor,
+    sketchBookBackground,
+    strokeWidth,
+    currentShape,
+    shapeFillColor,
+  } = useAppSelector((state) => state.toolkit);
 
   return (
     <Sheet>
@@ -126,6 +132,56 @@ const Sidebar = () => {
                 })}
             </div>
           </div>
+
+          {/* for shape fill color */}
+          {(currentShape === "square" || currentShape === "circle") && (
+            <div className="space-y-1">
+              <p className="text-xs">Shape fill color</p>
+              <div className="flex items-center justify-between">
+                {CANVAS_BG_COLOR_CODE &&
+                  CANVAS_BG_COLOR_CODE.map((color) => {
+                    return (
+                      <ColorBlocks
+                        key={uuidv4()}
+                        colorCode={color}
+                        type="shapeFill"
+                      />
+                    );
+                  })}
+
+                <Separator orientation="vertical" className="h-5" />
+
+                {/* color picker */}
+                <div
+                  tabIndex={0}
+                  className="rounded-[8px] border-[1px] border-mainPrimary w-fit cursor-pointer"
+                >
+                  <TooltipProvider>
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <Label className="cursor-pointer">
+                          <div
+                            style={{ backgroundColor: shapeFillColor }}
+                            className="w-5 h-5 rounded-[6px] m-[2px]"
+                          ></div>
+                          <Input
+                            type="color"
+                            className="hidden"
+                            onChange={(event) =>
+                              dispatch(setShapeFillColor(event.target.value))
+                            }
+                          />
+                        </Label>
+                      </TooltipTrigger>
+                      <TooltipContent>
+                        <p>Choose custom color</p>
+                      </TooltipContent>
+                    </Tooltip>
+                  </TooltipProvider>
+                </div>
+              </div>
+            </div>
+          )}
 
           {/* for canvas background color */}
           <div className="space-y-1">
