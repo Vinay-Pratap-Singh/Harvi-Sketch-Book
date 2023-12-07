@@ -155,7 +155,11 @@ const HeaderToolBox = () => {
                   ? "bg-mainPrimary hover:bg-mainPrimary text-white hover:text-white"
                   : "hover:bg-mainTertiary"
               }`}
-              onClick={() => dispatch(setCurrentShape("line"))}
+              onClick={() => {
+                dispatch(setCurrentShape("line"));
+                dispatch(setStrokeColor("#000000"));
+                dispatch(setStrokeWidth(1));
+              }}
             >
               <i className="fa-solid fa-minus" />
             </Button>

@@ -110,10 +110,17 @@ const SketchBoard = () => {
         const draw = (event: MouseEvent) => {
           if (!isDrawing.current) return;
           coordinate.endCoordinate = { x: event.clientX, y: event.clientY };
+        };
+
+        const stopDrawing = () => {
+          isDrawing.current = false;
+
           const { x: startX, y: startY } = coordinate.startCoordinate;
           const { x: endX, y: endY } = coordinate.endCoordinate;
-
           context.strokeStyle = strokeColor;
+          strokeStyle.name === "normal"
+            ? context.setLineDash([])
+            : context.setLineDash([strokeStyle.value ? strokeStyle.value : 0]);
           context.fillStyle = currentShapeFillColor;
           context.lineWidth = strokeWidth;
           context.fillRect(
@@ -129,10 +136,6 @@ const SketchBoard = () => {
             Math.abs(endX - startX),
             Math.abs(endY - startY)
           );
-        };
-
-        const stopDrawing = () => {
-          isDrawing.current = false;
         };
 
         canvas.addEventListener("mousedown", startDrawing);
@@ -178,6 +181,9 @@ const SketchBoard = () => {
           );
 
           context.strokeStyle = strokeColor;
+          strokeStyle.name === "normal"
+            ? context.setLineDash([])
+            : context.setLineDash([strokeStyle.value ? strokeStyle.value : 0]);
           context.fillStyle = currentShapeFillColor;
           context.lineWidth = strokeWidth;
           context.beginPath();
@@ -228,6 +234,9 @@ const SketchBoard = () => {
 
           // Draw the arrow
           context.beginPath();
+          strokeStyle.name === "normal"
+            ? context.setLineDash([])
+            : context.setLineDash([strokeStyle.value ? strokeStyle.value : 0]);
           context.moveTo(startX, startY);
           context.lineTo(endX, endY);
           context.lineWidth = strokeWidth;
@@ -252,6 +261,58 @@ const SketchBoard = () => {
           context.closePath();
           context.fillStyle = strokeColor;
           context.fill();
+        };
+
+        canvas.addEventListener("mousedown", startDrawing);
+        canvas.addEventListener("mousemove", draw);
+        canvas.addEventListener("mouseup", stopDrawing);
+
+        return () => {
+          canvas.removeEventListener("mousedown", startDrawing);
+          canvas.removeEventListener("mousemove", draw);
+          canvas.removeEventListener("mouseup", stopDrawing);
+        };
+      }
+
+      case "line": {
+        const coordinate = {
+          startCoordinate: { x: 0, y: 0 },
+          endCoordinate: { x: 0, y: 0 },
+        };
+
+        const startDrawing = (event: MouseEvent) => {
+          isDrawing.current = true;
+          coordinate.startCoordinate = {
+            x: event.clientX - canvas.offsetLeft,
+            y: event.clientY - canvas.offsetTop,
+          };
+        };
+
+        const draw = (event: MouseEvent) => {
+          if (!isDrawing.current) return;
+
+          coordinate.endCoordinate = {
+            x: event.clientX - canvas.offsetLeft,
+            y: event.clientY - canvas.offsetTop,
+          };
+        };
+
+        const stopDrawing = () => {
+          isDrawing.current = false;
+
+          const { x: startX, y: startY } = coordinate.startCoordinate;
+          const { x: endX, y: endY } = coordinate.endCoordinate;
+
+          // Draw the line
+          context.beginPath();
+          strokeStyle.name === "normal"
+            ? context.setLineDash([])
+            : context.setLineDash([strokeStyle.value ? strokeStyle.value : 0]);
+          context.moveTo(startX, startY);
+          context.lineTo(endX, endY);
+          context.lineWidth = strokeWidth;
+          context.strokeStyle = strokeColor;
+          context.stroke();
         };
 
         canvas.addEventListener("mousedown", startDrawing);
