@@ -1,4 +1,5 @@
-import { ILineStroke } from "@/helper/interface/interface";
+import { FONT_TYPE, STROKE_LINE_STYLE } from "@/constants/constants";
+import { IFontType, ILineStroke } from "@/helper/interface/interface";
 import { createSlice } from "@reduxjs/toolkit";
 
 type IInitialState = {
@@ -10,6 +11,7 @@ type IInitialState = {
   strokeStyle: ILineStroke;
   sketchBookBackground: string;
   shapeFillColor: string;
+  fontType: string;
 };
 
 const initialState: IInitialState = {
@@ -18,13 +20,10 @@ const initialState: IInitialState = {
   currentOperation: null,
   strokeColor: "#000000",
   strokeWidth: 1,
-  strokeStyle: {
-    name: "normal",
-    content: "-",
-    value: null,
-  },
+  strokeStyle: { ...STROKE_LINE_STYLE[0] },
   sketchBookBackground: "#FFFFFF",
   shapeFillColor: "#FFFFFF",
+  fontType: FONT_TYPE[0].name,
 };
 
 export const toolkitSlice = createSlice({
@@ -56,6 +55,9 @@ export const toolkitSlice = createSlice({
     setStrokeStyle: (state, action) => {
       state.strokeStyle = { ...action.payload };
     },
+    setFontType: (state, action) => {
+      state.fontType = action.payload;
+    },
   },
 });
 
@@ -67,5 +69,6 @@ export const {
   setStrokeWidth,
   setStrokeStyle,
   setShapeFillColor,
+  setFontType,
 } = toolkitSlice.actions;
 export default toolkitSlice.reducer;

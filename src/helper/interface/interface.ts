@@ -4,3 +4,8 @@ export interface ILineStroke {
   value: null | number;
   content: string;
 }
+
+export interface IFontType {
+  name: string;
+  value: string;
+}

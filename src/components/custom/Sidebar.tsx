@@ -15,6 +15,7 @@ import ColorBlocks from "./ColorBlocks";
 import { v4 as uuidv4 } from "uuid";
 import { useAppDispatch, useAppSelector } from "@/hooks/redux";
 import {
+  setFontType,
   setShapeFillColor,
   setSketchBookBackgroundColor,
   setStrokeColor,
@@ -22,12 +23,22 @@ import {
 } from "@/redux/toolkitSlice";
 import {
   CANVAS_BG_COLOR_CODE,
+  FONT_TYPE,
   STROKE_LINE_STYLE,
   STROKE_STYLE_COLOR_CODE,
 } from "@/constants/constants";
-import { ILineStroke } from "@/helper/interface/interface";
+import { IFontType, ILineStroke } from "@/helper/interface/interface";
 import LineStrokeBlock from "./LineStrokeBlock";
 import { toast } from "../ui/use-toast";
+import {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectLabel,
+  SelectTrigger,
+  SelectValue,
+} from "../ui/select";
 
 const Sidebar = () => {
   const dispatch = useAppDispatch();
@@ -37,6 +48,7 @@ const Sidebar = () => {
     strokeWidth,
     currentShape,
     shapeFillColor,
+    fontType,
   } = useAppSelector((state) => state.toolkit);
 
   return (
@@ -50,7 +62,9 @@ const Sidebar = () => {
         <div className="space-y-5">
           {/* for stroke color */}
           <div className="space-y-1">
-            <p className="text-xs">Stroke color</p>
+            <p className="text-xs">
+              {currentShape === "text" ? "Font color" : "Stroke color"}
+            </p>
             <div className="flex items-center justify-between">
               {STROKE_STYLE_COLOR_CODE &&
                 STROKE_STYLE_COLOR_CODE.map((color) => {
@@ -106,13 +120,23 @@ const Sidebar = () => {
           {/* for stroke width */}
           <div className="space-y-1">
             <p className="text-xs">
-              {currentShape === "eraser" ? "Eraser size" : "Stroke width"}
+              {currentShape === "eraser"
+                ? "Eraser size"
+                : currentShape === "text"
+                ? "Font size"
+                : "Stroke width"}
             </p>
             <div>
               <Input
                 type="range"
-                min={1}
-                max={currentShape === "eraser" ? 100 : 20}
+                min={currentShape === "text" ? 16 : 1}
+                max={
+                  currentShape === "eraser"
+                    ? 100
+                    : currentShape === "text"
+                    ? 50
+                    : 20
+                }
                 className="h-4"
                 value={strokeWidth}
                 onChange={(event) => {
@@ -122,16 +146,43 @@ const Sidebar = () => {
             </div>
           </div>
 
+          {/* for font type */}
+          {currentShape === "text" && (
+            <Select
+              value={fontType}
+              onValueChange={(value) => dispatch(setFontType(value))}
+            >
+              <SelectTrigger>
+                <SelectValue placeholder="Select font type" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectGroup>
+                  <SelectLabel>Fonts</SelectLabel>
+                  {FONT_TYPE &&
+                    FONT_TYPE.map((font: IFontType) => {
+                      return (
+                        <SelectItem key={uuidv4()} value={font.value}>
+                          {font.name}
+                        </SelectItem>
+                      );
+                    })}
+                </SelectGroup>
+              </SelectContent>
+            </Select>
+          )}
+
           {/* for stroke style */}
-          <div className="space-y-1">
-            <p className="text-xs">Stroke style</p>
-            <div className="flex items-center gap-2">
-              {STROKE_LINE_STYLE &&
-                STROKE_LINE_STYLE.map((stroke: ILineStroke) => {
-                  return <LineStrokeBlock key={uuidv4()} data={stroke} />;
-                })}
+          {currentShape !== "text" && (
+            <div className="space-y-1">
+              <p className="text-xs">Stroke style</p>
+              <div className="flex items-center gap-2">
+                {STROKE_LINE_STYLE &&
+                  STROKE_LINE_STYLE.map((stroke: ILineStroke) => {
+                    return <LineStrokeBlock key={uuidv4()} data={stroke} />;
+                  })}
+              </div>
             </div>
-          </div>
+          )}
 
           {/* for shape fill color */}
           {(currentShape === "square" || currentShape === "circle") && (

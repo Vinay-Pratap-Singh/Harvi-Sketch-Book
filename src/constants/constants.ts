@@ -1,4 +1,4 @@
-import { ILineStroke } from "@/helper/interface/interface";
+import { IFontType, ILineStroke } from "@/helper/interface/interface";
 
 export const STROKE_STYLE_COLOR_CODE: string[] = [
   "#000000",
@@ -33,4 +33,14 @@ export const STROKE_LINE_STYLE: ILineStroke[] = [
     content: "--",
     value: 10,
   },
+];
+
+export const FONT_TYPE: IFontType[] = [
+  { name: "Arial", value: "Arial" },
+  { name: "Helvetica", value: "Helvetica, sans-serif" },
+  { name: "Times New Roman", value: "'Times New Roman', serif" },
+  { name: "Georgia", value: "Georgia, serif" },
+  { name: "Courier New", value: "'Courier New', monospace" },
+  { name: "Verdana", value: "Verdana, sans-serif" },
+  { name: "Poppins", value: "'Poppins', sans-serif" },
 ];

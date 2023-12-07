@@ -16,6 +16,7 @@ import {
   setStrokeWidth,
   toggleCanvasLock,
 } from "@/redux/toolkitSlice";
+import { STROKE_LINE_STYLE } from "@/constants/constants";
 
 const HeaderToolBox = () => {
   const dispatch = useAppDispatch();
@@ -183,7 +184,11 @@ const HeaderToolBox = () => {
                   ? "bg-mainPrimary hover:bg-mainPrimary text-white hover:text-white"
                   : "hover:bg-mainTertiary"
               }`}
-              onClick={() => dispatch(setCurrentShape("text"))}
+              onClick={() => {
+                dispatch(setCurrentShape("text"));
+                dispatch(setStrokeColor("#000000"));
+                dispatch(setStrokeWidth(16));
+              }}
             >
               <i className="fa-solid fa-font" />
             </Button>
@@ -302,13 +307,7 @@ const HeaderToolBox = () => {
               onClick={() => {
                 dispatch(setCurrentShape("eraser"));
                 dispatch(setStrokeColor(sketchBookBackground));
-                dispatch(
-                  setStrokeStyle({
-                    name: "normal",
-                    content: "-",
-                    value: null,
-                  })
-                );
+                dispatch(setStrokeStyle({ ...STROKE_LINE_STYLE[0] }));
               }}
             >
               <i className="fa-solid fa-eraser" />

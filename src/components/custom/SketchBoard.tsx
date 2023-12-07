@@ -1,15 +1,11 @@
 import { applySketchBookBackgroundColor } from "@/helper/canvas/canvas";
-import { useAppSelector } from "@/hooks/redux";
+import { useAppDispatch, useAppSelector } from "@/hooks/redux";
 import useHexToRgba from "@/hooks/useHexToRgba";
-import React, {
-  useCallback,
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
-} from "react";
+import { setCurrentShape } from "@/redux/toolkitSlice";
+import React, { useEffect, useRef } from "react";
 
 const SketchBoard = () => {
+  const dispatch = useAppDispatch();
   const {
     sketchBookBackground,
     currentShape,
@@ -17,9 +13,13 @@ const SketchBoard = () => {
     strokeWidth,
     strokeStyle,
     shapeFillColor,
+    fontType,
   } = useAppSelector((state) => state.toolkit);
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
+  // for drawing shapes on canvas
   const isDrawing = useRef(false);
+  // for handling the text writting on canvas
+  const isTyping = useRef(false);
   const currentShapeFillColor = useHexToRgba(shapeFillColor);
 
   // setting default width and height for canvas
@@ -326,6 +326,56 @@ const SketchBoard = () => {
         };
       }
 
+      case "text": {
+        const startWriting = (event: MouseEvent) => {
+          const offsetX = event.clientX - canvas.offsetLeft;
+          const offsetY = event.clientY - canvas.offsetTop;
+          console.log(offsetX, offsetY);
+          isTyping.current = true;
+
+          // Create a contentEditable div dynamically
+          const textInput = document.createElement("div");
+          textInput.contentEditable = "true";
+          textInput.style.position = "absolute";
+          textInput.style.left = `${offsetX}px`;
+          textInput.style.top = `${offsetY}px`;
+          textInput.style.border = "1px solid black";
+          textInput.style.padding = "4px";
+
+          // Append the div to the body
+          document.body.appendChild(textInput);
+
+          // Set focus on the contentEditable div
+          requestAnimationFrame(() => {
+            textInput.focus();
+          });
+
+          // Handle blur event to capture text input
+          const handleBlur = () => {
+            isTyping.current = false;
+            const text = textInput.innerText;
+            // Remove the contentEditable div from the body
+            document.body.removeChild(textInput);
+
+            // Draw the entered text on the canvas
+            context.font = `${strokeWidth}px ${fontType}`;
+            context.fillStyle = strokeColor;
+            context.fillText(text, offsetX, offsetY);
+
+            // changing the current shape to null
+            dispatch(setCurrentShape(null));
+          };
+
+          textInput.addEventListener("blur", handleBlur, { once: true });
+        };
+
+        canvas.addEventListener("mousedown", startWriting, { once: true });
+
+        return () => {
+          canvas.removeEventListener("mousedown", startWriting);
+        };
+      }
+
       default:
         break;
     }
@@ -337,6 +387,8 @@ const SketchBoard = () => {
     strokeStyle,
     shapeFillColor,
     currentShapeFillColor,
+    dispatch,
+    fontType,
   ]);
 
   return <canvas ref={canvasRef}></canvas>;
