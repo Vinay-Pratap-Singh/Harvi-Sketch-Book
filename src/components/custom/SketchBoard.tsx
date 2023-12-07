@@ -2,7 +2,7 @@ import { applySketchBookBackgroundColor } from "@/helper/canvas/canvas";
 import { useAppDispatch, useAppSelector } from "@/hooks/redux";
 import useHexToRgba from "@/hooks/useHexToRgba";
 import { setCurrentShape } from "@/redux/toolkitSlice";
-import React, { useEffect, useRef } from "react";
+import React, { ChangeEvent, useEffect, useRef } from "react";
 
 const SketchBoard = () => {
   const dispatch = useAppDispatch();
@@ -330,7 +330,6 @@ const SketchBoard = () => {
         const startWriting = (event: MouseEvent) => {
           const offsetX = event.clientX - canvas.offsetLeft;
           const offsetY = event.clientY - canvas.offsetTop;
-          console.log(offsetX, offsetY);
           isTyping.current = true;
 
           // Create a contentEditable div dynamically
@@ -373,6 +372,50 @@ const SketchBoard = () => {
 
         return () => {
           canvas.removeEventListener("mousedown", startWriting);
+        };
+      }
+
+      case "image": {
+        const addImage = (event: MouseEvent) => {
+          const handleImageUpload = (
+            event: React.ChangeEvent<HTMLInputElement>,
+            x: number,
+            y: number
+          ) => {
+            if (!event.target) return;
+            const img = new Image();
+            const file = event.target?.files?.[0];
+            if (file) {
+              const reader = new FileReader();
+              reader.onload = (e) => {
+                img.onload = () => {
+                  context?.drawImage(img, x, y, 200, 200);
+                };
+                img.src = e.target?.result as string;
+              };
+              reader.readAsDataURL(file);
+            }
+          };
+
+          const offsetX = event.clientX - canvas.offsetLeft;
+          const offsetY = event.clientY - canvas.offsetTop;
+          const input = document.createElement("input");
+          input.type = "file";
+          input.accept = "image/*";
+          input.addEventListener("change", (event) =>
+            handleImageUpload(
+              event as unknown as React.ChangeEvent<HTMLInputElement>,
+              offsetX,
+              offsetY
+            )
+          );
+          input.click();
+        };
+
+        canvas.addEventListener("mousedown", addImage);
+
+        return () => {
+          canvas.removeEventListener("mousedown", addImage);
         };
       }
 
