@@ -1,8 +1,8 @@
 import { IInitialCanvasState } from "@/helper/interface/interface";
-import { createSlice } from "@reduxjs/toolkit";
+import { PayloadAction, createSlice } from "@reduxjs/toolkit";
 
 const initialState: IInitialCanvasState = {
-  currentCanvasIndex: 0,
+  currentCanvasIndex: -1,
   allCanvasImageData: [],
   canvas: null,
 };
@@ -11,10 +11,17 @@ export const canvasSlice = createSlice({
   name: "canvas",
   initialState,
   reducers: {
-    //   PayloadAction<HTMLCanvasElement>
     setCanvas: (state, action) => {
       state.canvas = action.payload;
       state.currentCanvasIndex = 0;
+    },
+
+    applySketchBookBackgroundColor: (state, action: PayloadAction<string>) => {
+      if (!state.canvas) return;
+      const context = state.canvas.getContext("2d");
+      if (!context) return;
+      context.fillStyle = action.payload;
+      context.fillRect(0, 0, state.canvas.width, state.canvas.height);
     },
 
     addCanvasImageData: (state) => {
@@ -44,7 +51,7 @@ export const canvasSlice = createSlice({
     },
 
     undoOperation: (state) => {
-      if (state.currentCanvasIndex > 0) {
+      if (state.currentCanvasIndex > 1) {
         state.currentCanvasIndex = state.currentCanvasIndex - 1;
       }
     },
@@ -59,6 +66,7 @@ export const canvasSlice = createSlice({
 
 export const {
   setCanvas,
+  applySketchBookBackgroundColor,
   addCanvasImageData,
   renderCanvas,
   undoOperation,

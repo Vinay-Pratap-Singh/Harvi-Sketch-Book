@@ -8,6 +8,11 @@ export const makeStore = () => {
       toolkit: toolkitSlice,
       canvas: canvasSlice,
     },
+    // for disabling the serialization check of data
+    middleware: (getDefaultMiddleware) =>
+      getDefaultMiddleware({
+        serializableCheck: false,
+      }),
   });
 };
 

@@ -1,8 +1,8 @@
-import { applySketchBookBackgroundColor } from "@/helper/canvas/canvas";
 import { useAppDispatch, useAppSelector } from "@/hooks/redux";
 import useHexToRgba from "@/hooks/useHexToRgba";
 import {
   addCanvasImageData,
+  applySketchBookBackgroundColor,
   renderCanvas,
   setCanvas,
 } from "@/redux/canvasSlice";
@@ -43,9 +43,9 @@ const SketchBoard = () => {
   useEffect(() => {
     const myCanvas = canvasRef.current;
     if (myCanvas) {
-      applySketchBookBackgroundColor(myCanvas, sketchBookBackground);
+      dispatch(applySketchBookBackgroundColor(sketchBookBackground));
     }
-  }, [sketchBookBackground]);
+  }, [sketchBookBackground, dispatch]);
 
   // to draw different shapes
   useEffect(() => {
@@ -420,9 +420,6 @@ const SketchBoard = () => {
                 img.src = e.target?.result as string;
               };
               reader.readAsDataURL(file);
-
-              // storing canvas image data
-              dispatch(addCanvasImageData());
             }
           };
 
@@ -431,13 +428,15 @@ const SketchBoard = () => {
           const input = document.createElement("input");
           input.type = "file";
           input.accept = "image/*";
-          input.addEventListener("change", (event) =>
+          input.addEventListener("change", (event) => {
             handleImageUpload(
               event as unknown as React.ChangeEvent<HTMLInputElement>,
               offsetX,
               offsetY
-            )
-          );
+            );
+            // storing canvas image data
+            dispatch(addCanvasImageData());
+          });
           input.click();
         };
 
