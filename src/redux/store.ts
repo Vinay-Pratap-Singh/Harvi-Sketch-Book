@@ -1,10 +1,12 @@
 import { configureStore } from "@reduxjs/toolkit";
 import toolkitSlice from "./toolkitSlice";
+import canvasSlice from "./canvasSlice";
 
 export const makeStore = () => {
   return configureStore({
     reducer: {
       toolkit: toolkitSlice,
+      canvas: canvasSlice,
     },
   });
 };

@@ -17,6 +17,11 @@ import {
   toggleCanvasLock,
 } from "@/redux/toolkitSlice";
 import { STROKE_LINE_STYLE } from "@/constants/constants";
+import {
+  redoOperation,
+  renderCanvas,
+  undoOperation,
+} from "@/redux/canvasSlice";
 
 const HeaderToolBox = () => {
   const dispatch = useAppDispatch();
@@ -258,6 +263,10 @@ const HeaderToolBox = () => {
         <Tooltip>
           <TooltipTrigger asChild>
             <Button
+              onClick={() => {
+                dispatch(undoOperation());
+                dispatch(renderCanvas());
+              }}
               disabled={isCanvasLocked}
               variant={"ghost"}
               size={"sm"}
@@ -277,6 +286,10 @@ const HeaderToolBox = () => {
         <Tooltip>
           <TooltipTrigger asChild>
             <Button
+              onClick={() => {
+                dispatch(redoOperation());
+                dispatch(renderCanvas());
+              }}
               disabled={isCanvasLocked}
               variant={"ghost"}
               size={"sm"}

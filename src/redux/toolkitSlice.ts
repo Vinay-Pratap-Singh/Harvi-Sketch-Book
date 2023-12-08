@@ -1,20 +1,9 @@
 import { FONT_TYPE, STROKE_LINE_STYLE } from "@/constants/constants";
-import { IFontType, ILineStroke } from "@/helper/interface/interface";
+import { IInitialToolkitState } from "@/helper/interface/interface";
+
 import { createSlice } from "@reduxjs/toolkit";
 
-type IInitialState = {
-  isCanvasLocked: boolean;
-  currentShape: string | null;
-  currentOperation: string | null;
-  strokeColor: string;
-  strokeWidth: number;
-  strokeStyle: ILineStroke;
-  sketchBookBackground: string;
-  shapeFillColor: string;
-  fontType: string;
-};
-
-const initialState: IInitialState = {
+const initialState: IInitialToolkitState = {
   isCanvasLocked: false,
   currentShape: null,
   currentOperation: null,

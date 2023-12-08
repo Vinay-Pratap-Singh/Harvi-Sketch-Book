@@ -1,3 +1,16 @@
+// for toolkit slice initial state
+export interface IInitialToolkitState {
+  isCanvasLocked: boolean;
+  currentShape: string | null;
+  currentOperation: string | null;
+  strokeColor: string;
+  strokeWidth: number;
+  strokeStyle: ILineStroke;
+  sketchBookBackground: string;
+  shapeFillColor: string;
+  fontType: string;
+}
+
 // for line stroke data
 export interface ILineStroke {
   name: string;
@@ -5,7 +18,15 @@ export interface ILineStroke {
   content: string;
 }
 
+// for font type
 export interface IFontType {
   name: string;
   value: string;
+}
+
+// for canvas initial state
+export interface IInitialCanvasState {
+  currentCanvasIndex: number;
+  allCanvasImageData: ImageData[];
+  canvas: HTMLCanvasElement | null;
 }

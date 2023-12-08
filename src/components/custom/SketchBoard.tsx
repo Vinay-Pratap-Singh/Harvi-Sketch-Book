@@ -1,8 +1,13 @@
 import { applySketchBookBackgroundColor } from "@/helper/canvas/canvas";
 import { useAppDispatch, useAppSelector } from "@/hooks/redux";
 import useHexToRgba from "@/hooks/useHexToRgba";
+import {
+  addCanvasImageData,
+  renderCanvas,
+  setCanvas,
+} from "@/redux/canvasSlice";
 import { setCurrentShape } from "@/redux/toolkitSlice";
-import React, { ChangeEvent, useEffect, useRef } from "react";
+import React, { useEffect, useRef } from "react";
 
 const SketchBoard = () => {
   const dispatch = useAppDispatch();
@@ -28,8 +33,11 @@ const SketchBoard = () => {
     if (myCanvas) {
       myCanvas.width = window.innerWidth;
       myCanvas.height = window.innerHeight;
+      dispatch(setCanvas(myCanvas));
+      dispatch(addCanvasImageData());
+      dispatch(renderCanvas());
     }
-  }, []);
+  }, [dispatch]);
 
   // setting the canvas background color
   useEffect(() => {
@@ -82,6 +90,9 @@ const SketchBoard = () => {
           isDrawing.current = false;
           if (context) {
             context.closePath();
+
+            // storing canvas image data
+            dispatch(addCanvasImageData());
           }
         };
 
@@ -136,6 +147,9 @@ const SketchBoard = () => {
             Math.abs(endX - startX),
             Math.abs(endY - startY)
           );
+
+          // storing canvas image data
+          dispatch(addCanvasImageData());
         };
 
         canvas.addEventListener("mousedown", startDrawing);
@@ -191,6 +205,9 @@ const SketchBoard = () => {
           context.stroke();
           context.fill();
           context.closePath();
+
+          // storing canvas image data
+          dispatch(addCanvasImageData());
         };
 
         canvas.addEventListener("mousedown", startDrawing);
@@ -261,6 +278,9 @@ const SketchBoard = () => {
           context.closePath();
           context.fillStyle = strokeColor;
           context.fill();
+
+          // storing canvas image data
+          dispatch(addCanvasImageData());
         };
 
         canvas.addEventListener("mousedown", startDrawing);
@@ -313,6 +333,9 @@ const SketchBoard = () => {
           context.lineWidth = strokeWidth;
           context.strokeStyle = strokeColor;
           context.stroke();
+
+          // storing canvas image data
+          dispatch(addCanvasImageData());
         };
 
         canvas.addEventListener("mousedown", startDrawing);
@@ -363,6 +386,9 @@ const SketchBoard = () => {
 
             // changing the current shape to null
             dispatch(setCurrentShape(null));
+
+            // storing canvas image data
+            dispatch(addCanvasImageData());
           };
 
           textInput.addEventListener("blur", handleBlur, { once: true });
@@ -394,6 +420,9 @@ const SketchBoard = () => {
                 img.src = e.target?.result as string;
               };
               reader.readAsDataURL(file);
+
+              // storing canvas image data
+              dispatch(addCanvasImageData());
             }
           };
 
