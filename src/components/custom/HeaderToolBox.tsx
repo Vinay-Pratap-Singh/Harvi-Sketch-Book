@@ -16,7 +16,10 @@ import {
   setStrokeWidth,
   toggleCanvasLock,
 } from "@/redux/toolkitSlice";
-import { STROKE_LINE_STYLE } from "@/constants/constants";
+import {
+  STROKE_LINE_STYLE,
+  STROKE_STYLE_COLOR_CODE,
+} from "@/constants/constants";
 import {
   redoOperation,
   renderCanvas,
@@ -25,9 +28,24 @@ import {
 
 const HeaderToolBox = () => {
   const dispatch = useAppDispatch();
-  const { isCanvasLocked, currentShape, sketchBookBackground } = useAppSelector(
-    (state) => state.toolkit
-  );
+  const { isCanvasLocked, currentShape, sketchBookBackground, strokeWidth } =
+    useAppSelector((state) => state.toolkit);
+
+  // function to set and unset the shape
+  function handleShapeSelection(shape: string, color: string, width: number) {
+    // if it is already selected
+    if (currentShape === shape) {
+      dispatch(setCurrentShape(null));
+    } else if (currentShape === "eraser") {
+      dispatch(setCurrentShape("eraser"));
+      dispatch(setStrokeColor(color));
+      dispatch(setStrokeStyle({ ...STROKE_LINE_STYLE[0] }));
+    } else {
+      dispatch(setCurrentShape(shape));
+      dispatch(setStrokeColor(color));
+      dispatch(setStrokeWidth(width));
+    }
+  }
 
   return (
     <section className="w-fit flex items-center my-5 py-2 px-4 shadow-md rounded-md space-x-2 absolute z-10">
@@ -78,9 +96,7 @@ const HeaderToolBox = () => {
                   : "hover:bg-mainTertiary"
               }`}
               onClick={() => {
-                dispatch(setCurrentShape("square"));
-                dispatch(setStrokeColor("#000000"));
-                dispatch(setStrokeWidth(1));
+                handleShapeSelection("square", STROKE_STYLE_COLOR_CODE[0], 1);
               }}
             >
               <i className="fa-regular fa-square" />
@@ -106,9 +122,7 @@ const HeaderToolBox = () => {
                   : "hover:bg-mainTertiary"
               }`}
               onClick={() => {
-                dispatch(setCurrentShape("circle"));
-                dispatch(setStrokeColor("#000000"));
-                dispatch(setStrokeWidth(1));
+                handleShapeSelection("circle", STROKE_STYLE_COLOR_CODE[0], 1);
               }}
             >
               <i className="fa-regular fa-circle" />
@@ -134,9 +148,7 @@ const HeaderToolBox = () => {
                   : "hover:bg-mainTertiary"
               }`}
               onClick={() => {
-                dispatch(setCurrentShape("arrow"));
-                dispatch(setStrokeColor("#000000"));
-                dispatch(setStrokeWidth(1));
+                handleShapeSelection("arrow", STROKE_STYLE_COLOR_CODE[0], 1);
               }}
             >
               <i className="fa-solid fa-arrow-right" />
@@ -162,9 +174,7 @@ const HeaderToolBox = () => {
                   : "hover:bg-mainTertiary"
               }`}
               onClick={() => {
-                dispatch(setCurrentShape("line"));
-                dispatch(setStrokeColor("#000000"));
-                dispatch(setStrokeWidth(1));
+                handleShapeSelection("line", STROKE_STYLE_COLOR_CODE[0], 1);
               }}
             >
               <i className="fa-solid fa-minus" />
@@ -190,9 +200,7 @@ const HeaderToolBox = () => {
                   : "hover:bg-mainTertiary"
               }`}
               onClick={() => {
-                dispatch(setCurrentShape("text"));
-                dispatch(setStrokeColor("#000000"));
-                dispatch(setStrokeWidth(16));
+                handleShapeSelection("text", STROKE_STYLE_COLOR_CODE[0], 16);
               }}
             >
               <i className="fa-solid fa-font" />
@@ -217,7 +225,11 @@ const HeaderToolBox = () => {
                   ? "bg-mainPrimary hover:bg-mainPrimary text-white hover:text-white"
                   : "hover:bg-mainTertiary"
               }`}
-              onClick={() => dispatch(setCurrentShape("image"))}
+              onClick={() => {
+                currentShape === "image"
+                  ? dispatch(setCurrentShape("null"))
+                  : dispatch(setCurrentShape("image"));
+              }}
             >
               <i className="fa-regular fa-image" />
             </Button>
@@ -242,9 +254,7 @@ const HeaderToolBox = () => {
                   : "hover:bg-mainTertiary"
               }`}
               onClick={() => {
-                dispatch(setCurrentShape("pencil"));
-                dispatch(setStrokeColor("#000000"));
-                dispatch(setStrokeWidth(1));
+                handleShapeSelection("pencil", STROKE_STYLE_COLOR_CODE[0], 1);
               }}
             >
               <i className="fa-solid fa-pencil" />
@@ -317,11 +327,13 @@ const HeaderToolBox = () => {
                   ? "bg-mainPrimary hover:bg-mainPrimary text-white hover:text-white"
                   : "hover:bg-mainTertiary"
               }`}
-              onClick={() => {
-                dispatch(setCurrentShape("eraser"));
-                dispatch(setStrokeColor(sketchBookBackground));
-                dispatch(setStrokeStyle({ ...STROKE_LINE_STYLE[0] }));
-              }}
+              onClick={() =>
+                handleShapeSelection(
+                  "eraser",
+                  sketchBookBackground,
+                  strokeWidth
+                )
+              }
             >
               <i className="fa-solid fa-eraser" />
             </Button>
