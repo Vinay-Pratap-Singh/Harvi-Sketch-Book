@@ -30,3 +30,9 @@ export interface IInitialCanvasState {
   allCanvasImageData: ImageData[];
   canvas: HTMLCanvasElement | null;
 }
+
+// for export type
+export interface IExportData {
+  fileName: string;
+  fileType: string;
+}

@@ -1,4 +1,8 @@
-import { IFontType, ILineStroke } from "@/helper/interface/interface";
+import {
+  IExportData,
+  IFontType,
+  ILineStroke,
+} from "@/helper/interface/interface";
 
 export const STROKE_STYLE_COLOR_CODE: string[] = [
   "#000000",
@@ -43,4 +47,19 @@ export const FONT_TYPE: IFontType[] = [
   { name: "Courier New", value: "'Courier New', monospace" },
   { name: "Verdana", value: "Verdana, sans-serif" },
   { name: "Poppins", value: "'Poppins', sans-serif" },
+];
+
+export const IMAGE_EXPORT_FORMAT: IExportData[] = [
+  {
+    fileName: "PNG",
+    fileType: "image/png",
+  },
+  {
+    fileName: "JPEG",
+    fileType: "image/jpeg",
+  },
+  {
+    fileName: "WEBP",
+    fileType: "image/webp",
+  },
 ];
