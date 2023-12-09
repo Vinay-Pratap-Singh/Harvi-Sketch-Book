@@ -34,8 +34,6 @@ const SketchBoard = () => {
       myCanvas.width = window.innerWidth;
       myCanvas.height = window.innerHeight;
       dispatch(setCanvas(myCanvas));
-      dispatch(addCanvasImageData());
-      dispatch(renderCanvas());
     }
   }, [dispatch]);
 

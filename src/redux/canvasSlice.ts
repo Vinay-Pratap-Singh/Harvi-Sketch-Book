@@ -13,7 +13,6 @@ export const canvasSlice = createSlice({
   reducers: {
     setCanvas: (state, action) => {
       state.canvas = action.payload;
-      state.currentCanvasIndex = 0;
     },
 
     applySketchBookBackgroundColor: (state, action: PayloadAction<string>) => {
@@ -51,7 +50,7 @@ export const canvasSlice = createSlice({
     },
 
     undoOperation: (state) => {
-      if (state.currentCanvasIndex > 1) {
+      if (state.currentCanvasIndex > 0) {
         state.currentCanvasIndex = state.currentCanvasIndex - 1;
       }
     },
@@ -60,6 +59,16 @@ export const canvasSlice = createSlice({
       if (state.currentCanvasIndex < state.allCanvasImageData.length - 1) {
         state.currentCanvasIndex = state.currentCanvasIndex + 1;
       }
+    },
+
+    resetCanvas: (state) => {
+      const canvas = state.canvas;
+      if (!canvas) return;
+      const context = canvas.getContext("2d");
+      if (!context) return;
+      context.clearRect(0, 0, canvas.width, canvas.height);
+      state.allCanvasImageData = [];
+      state.currentCanvasIndex = -1;
     },
   },
 });
@@ -71,5 +80,6 @@ export const {
   renderCanvas,
   undoOperation,
   redoOperation,
+  resetCanvas,
 } = canvasSlice.actions;
 export default canvasSlice.reducer;
