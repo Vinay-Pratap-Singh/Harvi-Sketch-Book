@@ -66,6 +66,15 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "../ui/alert-dialog";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "../ui/tabs";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "../ui/card";
 
 const Sidebar = () => {
   const dispatch = useAppDispatch();
@@ -419,16 +428,71 @@ const Sidebar = () => {
             </Dialog>
 
             {/* live collaboration */}
-            <Button
-              variant={"outline"}
-              className="hover:bg-mainSecondary w-full flex items-center justify-start gap-2"
-            >
-              <i className="fa-solid fa-user-group" />
-              <p>Live collaboration</p>
-            </Button>
+            <Dialog>
+              <DialogTrigger asChild>
+                <Button
+                  variant={"outline"}
+                  className="hover:bg-mainSecondary w-full flex items-center justify-start gap-2"
+                >
+                  <i className="fa-solid fa-user-group" />
+                  <p>Live collaboration</p>
+                </Button>
+              </DialogTrigger>
+              <DialogContent className="sm:max-w-[400px]">
+                <Tabs defaultValue="account" className="w-[350px]">
+                  <TabsList className="grid w-full grid-cols-2">
+                    <TabsTrigger value="create">Create</TabsTrigger>
+                    <TabsTrigger value="join">Join</TabsTrigger>
+                  </TabsList>
+                  <TabsContent value="create">
+                    <Card>
+                      <CardHeader>
+                        <CardTitle className="text-center">
+                          Create a room
+                        </CardTitle>
+                      </CardHeader>
+                      <CardContent className="space-y-2">
+                        <div className="space-y-1">
+                          <Label htmlFor="username">Your name</Label>
+                          <Input
+                            id="username"
+                            placeholder="Harvi"
+                            minLength={3}
+                          />
+                        </div>
+                      </CardContent>
+                      <CardFooter>
+                        <Button className="w-full">Create</Button>
+                      </CardFooter>
+                    </Card>
+                  </TabsContent>
+                  <TabsContent value="join">
+                    <Card>
+                      <CardHeader>
+                        <CardTitle className="text-center">
+                          Join a room
+                        </CardTitle>
+                      </CardHeader>
+                      <CardContent className="space-y-2">
+                        <div className="space-y-1">
+                          <Label htmlFor="roomcode">Room ID</Label>
+                          <Input
+                            id="roomcode"
+                            type="text"
+                            placeholder="h223902nk239"
+                          />
+                        </div>
+                      </CardContent>
+                      <CardFooter>
+                        <Button className="w-full">Join</Button>
+                      </CardFooter>
+                    </Card>
+                  </TabsContent>
+                </Tabs>
+              </DialogContent>
+            </Dialog>
 
             {/* reset canvas */}
-
             <AlertDialog>
               <AlertDialogTrigger asChild>
                 <Button
