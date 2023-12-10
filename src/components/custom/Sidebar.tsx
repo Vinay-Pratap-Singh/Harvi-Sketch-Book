@@ -34,7 +34,7 @@ import {
   ILineStroke,
 } from "@/helper/interface/interface";
 import LineStrokeBlock from "./LineStrokeBlock";
-import { toast } from "../ui/use-toast";
+import { useToast } from "../ui/use-toast";
 import {
   Select,
   SelectContent,
@@ -54,7 +54,7 @@ import {
   DialogTrigger,
 } from "../ui/dialog";
 import exportCanvasData from "@/helper/functions/exportCanvasData";
-import { addCanvasImageData, resetCanvas } from "@/redux/canvasSlice";
+import { resetCanvas } from "@/redux/canvasSlice";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -75,6 +75,7 @@ import {
   CardHeader,
   CardTitle,
 } from "../ui/card";
+import io, { Socket } from "socket.io-client";
 
 const Sidebar = () => {
   const dispatch = useAppDispatch();
@@ -87,6 +88,7 @@ const Sidebar = () => {
     fontType,
   } = useAppSelector((state) => state.toolkit);
   const { canvas } = useAppSelector((state) => state.canvas);
+  const { toast } = useToast();
 
   // for filename and filetype data
   const [exportData, setExportData] = useState<IExportData>({
@@ -94,6 +96,52 @@ const Sidebar = () => {
     fileType: "image/png",
   });
   const [isOpen, setIsOpen] = useState(false);
+
+  const [socket, setSocket] = useState<Socket | null>(null);
+  const [name, setName] = useState("");
+  const [roomId, setRoomId] = useState("");
+
+  const connectToSocket = () => {
+    const newSocket = io(process.env.SERVER_URL || "http://localhost:5000");
+    setSocket(newSocket);
+
+    newSocket.on("roomCreated", ({ roomId: newRoomId }: { roomId: string }) => {
+      setRoomId(newRoomId);
+      toast({
+        title: "Room created successfully",
+      });
+    });
+
+    newSocket.on(
+      "userJoin",
+      ({ userId, name: userName }: { userId: string; name: string }) => {
+        toast({ title: `${userName} joined the room.` });
+      }
+    );
+
+    newSocket.on(
+      "userLeave",
+      ({ userId, name: userName }: { userId: string; name: string }) => {
+        toast({ title: `${userName} left the room.` });
+      }
+    );
+
+    return newSocket;
+  };
+
+  const createRoom = () => {
+    const mySocket = connectToSocket();
+    if (mySocket) {
+      mySocket.emit("createRoom", { name });
+    }
+  };
+
+  const joinRoom = () => {
+    const mySocket = connectToSocket();
+    if (mySocket) {
+      mySocket.emit("joinRoom", { roomId, name });
+    }
+  };
 
   return (
     <Sheet>
@@ -448,21 +496,68 @@ const Sidebar = () => {
                     <Card>
                       <CardHeader>
                         <CardTitle className="text-center">
-                          Create a room
+                          {roomId ? "Your current room" : "Create a room"}
                         </CardTitle>
+                        {roomId && (
+                          <CardDescription>
+                            Please copy and share the room code with your
+                            friends to join the drawing board.
+                          </CardDescription>
+                        )}
                       </CardHeader>
                       <CardContent className="space-y-2">
                         <div className="space-y-1">
-                          <Label htmlFor="username">Your name</Label>
-                          <Input
-                            id="username"
-                            placeholder="Harvi"
-                            minLength={3}
-                          />
+                          {roomId ? (
+                            <div className="flex items-center justify-between">
+                              <p>{roomId}</p>
+                              <Button
+                                type="button"
+                                variant={"outline"}
+                                onClick={() => {
+                                  navigator.clipboard.writeText(roomId);
+                                  toast({
+                                    title: "Room ID copied ...",
+                                  });
+                                }}
+                              >
+                                <i className="fa-solid fa-copy" />
+                              </Button>
+                            </div>
+                          ) : (
+                            <>
+                              <Label htmlFor="username">Your name</Label>
+                              <Input
+                                id="username"
+                                placeholder="Harvi"
+                                value={name}
+                                onChange={(event) =>
+                                  setName(event.target.value)
+                                }
+                              />
+                            </>
+                          )}
                         </div>
                       </CardContent>
                       <CardFooter>
-                        <Button className="w-full">Create</Button>
+                        {roomId ? (
+                          <Button
+                            type="button"
+                            className="w-full"
+                            onClick={createRoom}
+                            variant={"destructive"}
+                          >
+                            Delete room
+                          </Button>
+                        ) : (
+                          <Button
+                            type="button"
+                            className="w-full"
+                            onClick={createRoom}
+                            disabled={name.length < 3}
+                          >
+                            Create
+                          </Button>
+                        )}
                       </CardFooter>
                     </Card>
                   </TabsContent>
@@ -475,16 +570,38 @@ const Sidebar = () => {
                       </CardHeader>
                       <CardContent className="space-y-2">
                         <div className="space-y-1">
-                          <Label htmlFor="roomcode">Room ID</Label>
-                          <Input
-                            id="roomcode"
-                            type="text"
-                            placeholder="h223902nk239"
-                          />
+                          <div>
+                            <Label htmlFor="username">Your name</Label>
+                            <Input
+                              id="username"
+                              type="text"
+                              placeholder="Harvi"
+                              value={name}
+                              onChange={(event) => setName(event.target.value)}
+                            />
+                          </div>
+                          <div>
+                            <Label htmlFor="roomcode">Room ID</Label>
+                            <Input
+                              id="roomcode"
+                              type="text"
+                              placeholder="Room code"
+                              value={roomId}
+                              onChange={(event) =>
+                                setRoomId(event.target.value)
+                              }
+                            />
+                          </div>
                         </div>
                       </CardContent>
                       <CardFooter>
-                        <Button className="w-full">Join</Button>
+                        <Button
+                          disabled={name.length < 3 || roomId.length < 5}
+                          className="w-full"
+                          onClick={joinRoom}
+                        >
+                          Join
+                        </Button>
                       </CardFooter>
                     </Card>
                   </TabsContent>
