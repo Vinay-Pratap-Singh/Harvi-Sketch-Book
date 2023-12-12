@@ -4,12 +4,6 @@ import { Button } from "../ui/button";
 import { Separator } from "../ui/separator";
 import { Input } from "../ui/input";
 import { Label } from "../ui/label";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from "../ui/tooltip";
 
 import ColorBlocks from "./ColorBlocks";
 import { v4 as uuidv4 } from "uuid";
@@ -63,6 +57,7 @@ import {
 } from "../ui/card";
 import io, { Socket } from "socket.io-client";
 import ExportSketch from "./sidebar/ExportSketch";
+import ColorPicker from "./sidebar/ColorPicker";
 
 const Sidebar = () => {
   const dispatch = useAppDispatch();
@@ -176,40 +171,11 @@ const Sidebar = () => {
               <Separator orientation="vertical" className="h-5" />
 
               {/* color picker */}
-              <div
-                tabIndex={0}
-                className="rounded-[8px] border-[1px] border-mainPrimary w-fit cursor-pointer"
-              >
-                <TooltipProvider>
-                  <Tooltip>
-                    <TooltipTrigger asChild>
-                      <Label className="cursor-pointer">
-                        <div
-                          style={{ backgroundColor: strokeColor }}
-                          className="w-5 h-5 rounded-[6px] m-[2px]"
-                        ></div>
-                        <Input
-                          type="color"
-                          className="hidden"
-                          onChange={(event) => {
-                            if (currentShape === "eraser") {
-                              toast({
-                                description:
-                                  "Feature disabled while using eraser",
-                              });
-                              return;
-                            }
-                            dispatch(setStrokeColor(event.target.value));
-                          }}
-                        />
-                      </Label>
-                    </TooltipTrigger>
-                    <TooltipContent>
-                      <p>Choose custom color</p>
-                    </TooltipContent>
-                  </Tooltip>
-                </TooltipProvider>
-              </div>
+              <ColorPicker
+                key={uuidv4()}
+                action={setStrokeColor}
+                color={strokeColor}
+              />
             </div>
           </div>
 
@@ -304,33 +270,11 @@ const Sidebar = () => {
                 <Separator orientation="vertical" className="h-5" />
 
                 {/* color picker */}
-                <div
-                  tabIndex={0}
-                  className="rounded-[8px] border-[1px] border-mainPrimary w-fit cursor-pointer"
-                >
-                  <TooltipProvider>
-                    <Tooltip>
-                      <TooltipTrigger asChild>
-                        <Label className="cursor-pointer">
-                          <div
-                            style={{ backgroundColor: shapeFillColor }}
-                            className="w-5 h-5 rounded-[6px] m-[2px]"
-                          ></div>
-                          <Input
-                            type="color"
-                            className="hidden"
-                            onChange={(event) =>
-                              dispatch(setShapeFillColor(event.target.value))
-                            }
-                          />
-                        </Label>
-                      </TooltipTrigger>
-                      <TooltipContent>
-                        <p>Choose custom color</p>
-                      </TooltipContent>
-                    </Tooltip>
-                  </TooltipProvider>
-                </div>
+                <ColorPicker
+                  key={uuidv4()}
+                  action={setShapeFillColor}
+                  color={shapeFillColor}
+                />
               </div>
             </div>
           )}
@@ -353,42 +297,11 @@ const Sidebar = () => {
               <Separator orientation="vertical" className="h-5" />
 
               {/* color picker */}
-              <div
-                tabIndex={0}
-                className="rounded-[8px] border-[1px] border-mainPrimary w-fit cursor-pointer"
-              >
-                <TooltipProvider>
-                  <Tooltip>
-                    <TooltipTrigger asChild>
-                      <Label className="cursor-pointer">
-                        <div
-                          style={{ backgroundColor: sketchBookBackground }}
-                          className="w-5 h-5 rounded-[6px] m-[2px]"
-                        ></div>
-                        <Input
-                          type="color"
-                          className="hidden"
-                          onChange={(event) => {
-                            if (currentShape === "eraser") {
-                              toast({
-                                description:
-                                  "Feature disabled while using eraser",
-                              });
-                              return;
-                            }
-                            dispatch(
-                              setSketchBookBackgroundColor(event.target.value)
-                            );
-                          }}
-                        />
-                      </Label>
-                    </TooltipTrigger>
-                    <TooltipContent>
-                      <p>Choose custom color</p>
-                    </TooltipContent>
-                  </Tooltip>
-                </TooltipProvider>
-              </div>
+              <ColorPicker
+                key={uuidv4()}
+                action={setSketchBookBackgroundColor}
+                color={sketchBookBackground}
+              />
             </div>
           </div>
 
