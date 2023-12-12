@@ -3,11 +3,11 @@ import useHexToRgba from "@/hooks/useHexToRgba";
 import {
   addCanvasImageData,
   applySketchBookBackgroundColor,
-  renderCanvas,
   setCanvas,
 } from "@/redux/canvasSlice";
 import { setCurrentShape } from "@/redux/toolkitSlice";
 import React, { useEffect, useRef } from "react";
+import { io } from "socket.io-client";
 
 const SketchBoard = () => {
   const dispatch = useAppDispatch();

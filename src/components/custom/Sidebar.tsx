@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useRef, useState } from "react";
 import { Sheet, SheetContent, SheetTrigger } from "../ui/sheet";
 import { Button } from "../ui/button";
 import { Separator } from "../ui/separator";
@@ -24,15 +24,10 @@ import {
 import {
   CANVAS_BG_COLOR_CODE,
   FONT_TYPE,
-  IMAGE_EXPORT_FORMAT,
   STROKE_LINE_STYLE,
   STROKE_STYLE_COLOR_CODE,
 } from "@/constants/constants";
-import {
-  IExportData,
-  IFontType,
-  ILineStroke,
-} from "@/helper/interface/interface";
+import { IFontType, ILineStroke } from "@/helper/interface/interface";
 import LineStrokeBlock from "./LineStrokeBlock";
 import { useToast } from "../ui/use-toast";
 import {
@@ -44,16 +39,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "../ui/select";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "../ui/dialog";
-import exportCanvasData from "@/helper/functions/exportCanvasData";
+import { Dialog, DialogContent, DialogTrigger } from "../ui/dialog";
 import { resetCanvas } from "@/redux/canvasSlice";
 import {
   AlertDialog,
@@ -76,6 +62,7 @@ import {
   CardTitle,
 } from "../ui/card";
 import io, { Socket } from "socket.io-client";
+import ExportSketch from "./sidebar/ExportSketch";
 
 const Sidebar = () => {
   const dispatch = useAppDispatch();
@@ -87,60 +74,77 @@ const Sidebar = () => {
     shapeFillColor,
     fontType,
   } = useAppSelector((state) => state.toolkit);
-  const { canvas } = useAppSelector((state) => state.canvas);
   const { toast } = useToast();
 
-  // for filename and filetype data
-  const [exportData, setExportData] = useState<IExportData>({
-    fileName: "canvas_artwork",
-    fileType: "image/png",
+  const socket = useRef<Socket | null>(null);
+  const [userDetails, setUserDetails] = useState({
+    isAdmin: false,
+    name: "",
+    roomId: "",
   });
-  const [isOpen, setIsOpen] = useState(false);
-
-  const [socket, setSocket] = useState<Socket | null>(null);
-  const [name, setName] = useState("");
-  const [roomId, setRoomId] = useState("");
 
   const connectToSocket = () => {
     const newSocket = io(process.env.SERVER_URL || "http://localhost:5000");
-    setSocket(newSocket);
+    socket.current = newSocket;
 
-    newSocket.on("roomCreated", ({ roomId: newRoomId }: { roomId: string }) => {
-      setRoomId(newRoomId);
-      toast({
-        title: "Room created successfully",
-      });
+    if (!socket.current) return;
+    socket.current.on("userLeave", ({ name: userName }: { name: string }) => {
+      toast({ title: `${userName} left the room.` });
     });
-
-    newSocket.on(
-      "userJoin",
-      ({ userId, name: userName }: { userId: string; name: string }) => {
-        toast({ title: `${userName} joined the room.` });
-      }
-    );
-
-    newSocket.on(
-      "userLeave",
-      ({ userId, name: userName }: { userId: string; name: string }) => {
-        toast({ title: `${userName} left the room.` });
-      }
-    );
-
-    return newSocket;
   };
 
   const createRoom = () => {
-    const mySocket = connectToSocket();
-    if (mySocket) {
-      mySocket.emit("createRoom", { name });
-    }
+    // connecting to socket
+    connectToSocket();
+    console.log(socket.current);
+    if (!socket.current) return;
+    socket.current.emit("createRoom", { name: userDetails?.name });
+
+    // room created
+    socket.current.on(
+      "roomCreated",
+      ({ roomId: newRoomId }: { roomId: string }) => {
+        setUserDetails({ ...userDetails, isAdmin: true, roomId: newRoomId });
+        toast({
+          title: "Room created successfully",
+        });
+      }
+    );
   };
 
   const joinRoom = () => {
-    const mySocket = connectToSocket();
-    if (mySocket) {
-      mySocket.emit("joinRoom", { roomId, name });
+    // if already an admin
+    if (userDetails.isAdmin && userDetails.roomId) {
+      toast({
+        title: "Prohibited !",
+        description: "You are already an admin of a room",
+      });
+      return;
     }
+
+    // connecting to socket
+    connectToSocket();
+    if (!socket.current) return;
+    socket.current.emit("joinRoom", {
+      userId: userDetails?.roomId,
+      name: userDetails?.name,
+    });
+
+    setUserDetails({ ...userDetails, isAdmin: false });
+
+    // user joined the room
+    socket.current.on(
+      "userJoin",
+      ({
+        userId: newUserId,
+        name: userName,
+      }: {
+        userId: string;
+        name: string;
+      }) => {
+        toast({ title: `${userName} joined the room.` });
+      }
+    );
   };
 
   return (
@@ -393,87 +397,7 @@ const Sidebar = () => {
           {/* for extra option */}
           <div className="space-y-2">
             {/* export sketch */}
-            <Dialog open={isOpen} onOpenChange={setIsOpen}>
-              <DialogTrigger className="w-full">
-                <Button
-                  variant={"outline"}
-                  className="hover:bg-mainSecondary w-full flex items-center justify-start gap-2"
-                >
-                  <i className="fa-solid fa-download" /> <p>Export sketch</p>
-                </Button>
-              </DialogTrigger>
-              <DialogContent>
-                <DialogHeader className="space-y-5">
-                  <DialogTitle>Export your artwork</DialogTitle>
-                  <DialogDescription className="flex flex-col gap-5">
-                    {/* for file name */}
-                    <Label>
-                      File name
-                      <Input
-                        type="text"
-                        className="mt-2"
-                        value={exportData?.fileName}
-                        placeholder="File name"
-                        onChange={(event) =>
-                          setExportData({
-                            ...exportData,
-                            fileName: event?.target?.value,
-                          })
-                        }
-                      />
-                    </Label>
-
-                    {/* for file type */}
-                    <Label>
-                      <p className="mb-2">File type</p>
-                      <Select
-                        value={exportData?.fileType}
-                        onValueChange={(value) =>
-                          setExportData({ ...exportData, fileType: value })
-                        }
-                      >
-                        <SelectTrigger>
-                          <SelectValue placeholder="Choose file type" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectGroup>
-                            <SelectLabel>File types</SelectLabel>
-                            {IMAGE_EXPORT_FORMAT &&
-                              IMAGE_EXPORT_FORMAT.map((file: IExportData) => {
-                                return (
-                                  <SelectItem
-                                    key={uuidv4()}
-                                    value={file?.fileType}
-                                  >
-                                    {file?.fileName}
-                                  </SelectItem>
-                                );
-                              })}
-                          </SelectGroup>
-                        </SelectContent>
-                      </Select>
-                    </Label>
-                  </DialogDescription>
-                  <DialogFooter>
-                    <Button
-                      disabled={!exportData?.fileName || !exportData?.fileType}
-                      className="w-full"
-                      onClick={() => {
-                        exportCanvasData(
-                          canvas,
-                          exportData?.fileName,
-                          exportData?.fileType
-                        );
-                        setIsOpen(false);
-                        setExportData(IMAGE_EXPORT_FORMAT[0]);
-                      }}
-                    >
-                      Export
-                    </Button>
-                  </DialogFooter>
-                </DialogHeader>
-              </DialogContent>
-            </Dialog>
+            <ExportSketch />
 
             {/* live collaboration */}
             <Dialog>
@@ -496,9 +420,11 @@ const Sidebar = () => {
                     <Card>
                       <CardHeader>
                         <CardTitle className="text-center">
-                          {roomId ? "Your current room" : "Create a room"}
+                          {userDetails?.isAdmin && userDetails?.roomId
+                            ? "Your current room"
+                            : "Create a room"}
                         </CardTitle>
-                        {roomId && (
+                        {userDetails?.isAdmin && userDetails?.roomId && (
                           <CardDescription>
                             Please copy and share the room code with your
                             friends to join the drawing board.
@@ -507,14 +433,16 @@ const Sidebar = () => {
                       </CardHeader>
                       <CardContent className="space-y-2">
                         <div className="space-y-1">
-                          {roomId ? (
+                          {userDetails?.isAdmin && userDetails?.roomId ? (
                             <div className="flex items-center justify-between">
-                              <p>{roomId}</p>
+                              <p>{userDetails?.roomId}</p>
                               <Button
                                 type="button"
                                 variant={"outline"}
                                 onClick={() => {
-                                  navigator.clipboard.writeText(roomId);
+                                  navigator.clipboard.writeText(
+                                    userDetails?.roomId
+                                  );
                                   toast({
                                     title: "Room ID copied ...",
                                   });
@@ -527,11 +455,18 @@ const Sidebar = () => {
                             <>
                               <Label htmlFor="username">Your name</Label>
                               <Input
+                                disabled={
+                                  !userDetails?.isAdmin &&
+                                  Boolean(userDetails?.roomId)
+                                }
                                 id="username"
                                 placeholder="Harvi"
-                                value={name}
+                                value={userDetails?.name}
                                 onChange={(event) =>
-                                  setName(event.target.value)
+                                  setUserDetails({
+                                    ...userDetails,
+                                    name: event.target.value,
+                                  })
                                 }
                               />
                             </>
@@ -539,7 +474,7 @@ const Sidebar = () => {
                         </div>
                       </CardContent>
                       <CardFooter>
-                        {roomId ? (
+                        {userDetails?.isAdmin && userDetails?.roomId ? (
                           <Button
                             type="button"
                             className="w-full"
@@ -553,7 +488,11 @@ const Sidebar = () => {
                             type="button"
                             className="w-full"
                             onClick={createRoom}
-                            disabled={name.length < 3}
+                            disabled={
+                              userDetails.name.length < 3 ||
+                              (!userDetails?.isAdmin &&
+                                Boolean(userDetails?.roomId))
+                            }
                           >
                             Create
                           </Button>
@@ -573,22 +512,32 @@ const Sidebar = () => {
                           <div>
                             <Label htmlFor="username">Your name</Label>
                             <Input
+                              disabled={userDetails?.isAdmin}
                               id="username"
                               type="text"
                               placeholder="Harvi"
-                              value={name}
-                              onChange={(event) => setName(event.target.value)}
+                              value={userDetails?.name}
+                              onChange={(event) =>
+                                setUserDetails({
+                                  ...userDetails,
+                                  name: event.target.value,
+                                })
+                              }
                             />
                           </div>
                           <div>
                             <Label htmlFor="roomcode">Room ID</Label>
                             <Input
+                              disabled={userDetails?.isAdmin}
                               id="roomcode"
                               type="text"
                               placeholder="Room code"
-                              value={roomId}
+                              value={userDetails.roomId}
                               onChange={(event) =>
-                                setRoomId(event.target.value)
+                                setUserDetails({
+                                  ...userDetails,
+                                  roomId: event.target.value,
+                                })
                               }
                             />
                           </div>
@@ -596,7 +545,11 @@ const Sidebar = () => {
                       </CardContent>
                       <CardFooter>
                         <Button
-                          disabled={name.length < 3 || roomId.length < 5}
+                          disabled={
+                            userDetails.name.length < 3 ||
+                            userDetails.roomId.length < 5 ||
+                            userDetails.isAdmin
+                          }
                           className="w-full"
                           onClick={joinRoom}
                         >

@@ -70,6 +70,11 @@ export const canvasSlice = createSlice({
       state.allCanvasImageData = [];
       state.currentCanvasIndex = -1;
     },
+
+    updateData: (state, action) => {
+      state.allCanvasImageData = action.payload.allCanvasImageData;
+      state.currentCanvasIndex = action.payload.currentCanvasIndex;
+    },
   },
 });
 
@@ -81,5 +86,6 @@ export const {
   undoOperation,
   redoOperation,
   resetCanvas,
+  updateData,
 } = canvasSlice.actions;
 export default canvasSlice.reducer;
