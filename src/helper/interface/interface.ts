@@ -31,6 +31,11 @@ export interface IInitialCanvasState {
   canvas: HTMLCanvasElement | null;
 }
 
+// for socket slice initial state
+export interface IInitialSocketState {
+  isAdmin: boolean;
+}
+
 // for export type
 export interface IExportData {
   fileName: string;

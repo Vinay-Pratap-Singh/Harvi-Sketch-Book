@@ -1,4 +1,4 @@
-import React, { useRef, useState } from "react";
+import React from "react";
 import { Sheet, SheetContent, SheetTrigger } from "../ui/sheet";
 import { Button } from "../ui/button";
 import { Separator } from "../ui/separator";
@@ -23,7 +23,6 @@ import {
 } from "@/constants/constants";
 import { IFontType, ILineStroke } from "@/helper/interface/interface";
 import LineStrokeBlock from "./LineStrokeBlock";
-import { useToast } from "../ui/use-toast";
 import {
   Select,
   SelectContent,
@@ -33,33 +32,11 @@ import {
   SelectTrigger,
   SelectValue,
 } from "../ui/select";
-import { Dialog, DialogContent, DialogTrigger } from "../ui/dialog";
-import { resetCanvas } from "@/redux/canvasSlice";
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-  AlertDialogTrigger,
-} from "../ui/alert-dialog";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "../ui/tabs";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from "../ui/card";
-import io, { Socket } from "socket.io-client";
 import ExportSketch from "./sidebar/ExportSketch";
 import ColorPicker from "./sidebar/ColorPicker";
 import ResetCanvas from "./sidebar/ResetCanvas";
 import SocialMedia from "./sidebar/SocialMedia";
+import LiveCollaboration from "./sidebar/LiveCollaboration";
 
 const Sidebar = () => {
   const dispatch = useAppDispatch();
@@ -71,78 +48,6 @@ const Sidebar = () => {
     shapeFillColor,
     fontType,
   } = useAppSelector((state) => state.toolkit);
-  const { toast } = useToast();
-
-  const socket = useRef<Socket | null>(null);
-  const [userDetails, setUserDetails] = useState({
-    isAdmin: false,
-    name: "",
-    roomId: "",
-  });
-
-  const connectToSocket = () => {
-    const newSocket = io(process.env.SERVER_URL || "http://localhost:5000");
-    socket.current = newSocket;
-
-    if (!socket.current) return;
-    socket.current.on("userLeave", ({ name: userName }: { name: string }) => {
-      toast({ title: `${userName} left the room.` });
-    });
-  };
-
-  const createRoom = () => {
-    // connecting to socket
-    connectToSocket();
-    console.log(socket.current);
-    if (!socket.current) return;
-    socket.current.emit("createRoom", { name: userDetails?.name });
-
-    // room created
-    socket.current.on(
-      "roomCreated",
-      ({ roomId: newRoomId }: { roomId: string }) => {
-        setUserDetails({ ...userDetails, isAdmin: true, roomId: newRoomId });
-        toast({
-          title: "Room created successfully",
-        });
-      }
-    );
-  };
-
-  const joinRoom = () => {
-    // if already an admin
-    if (userDetails.isAdmin && userDetails.roomId) {
-      toast({
-        title: "Prohibited !",
-        description: "You are already an admin of a room",
-      });
-      return;
-    }
-
-    // connecting to socket
-    connectToSocket();
-    if (!socket.current) return;
-    socket.current.emit("joinRoom", {
-      userId: userDetails?.roomId,
-      name: userDetails?.name,
-    });
-
-    setUserDetails({ ...userDetails, isAdmin: false });
-
-    // user joined the room
-    socket.current.on(
-      "userJoin",
-      ({
-        userId: newUserId,
-        name: userName,
-      }: {
-        userId: string;
-        name: string;
-      }) => {
-        toast({ title: `${userName} joined the room.` });
-      }
-    );
-  };
 
   return (
     <Sheet>
@@ -315,167 +220,7 @@ const Sidebar = () => {
             <ExportSketch />
 
             {/* live collaboration */}
-            <Dialog>
-              <DialogTrigger asChild>
-                <Button
-                  variant={"outline"}
-                  className="hover:bg-mainSecondary w-full flex items-center justify-start gap-2"
-                >
-                  <i className="fa-solid fa-user-group" />
-                  <p>Live collaboration</p>
-                </Button>
-              </DialogTrigger>
-              <DialogContent className="sm:max-w-[400px]">
-                <Tabs defaultValue="account" className="w-[350px]">
-                  <TabsList className="grid w-full grid-cols-2">
-                    <TabsTrigger value="create">Create</TabsTrigger>
-                    <TabsTrigger value="join">Join</TabsTrigger>
-                  </TabsList>
-                  <TabsContent value="create">
-                    <Card>
-                      <CardHeader>
-                        <CardTitle className="text-center">
-                          {userDetails?.isAdmin && userDetails?.roomId
-                            ? "Your current room"
-                            : "Create a room"}
-                        </CardTitle>
-                        {userDetails?.isAdmin && userDetails?.roomId && (
-                          <CardDescription>
-                            Please copy and share the room code with your
-                            friends to join the drawing board.
-                          </CardDescription>
-                        )}
-                      </CardHeader>
-                      <CardContent className="space-y-2">
-                        <div className="space-y-1">
-                          {userDetails?.isAdmin && userDetails?.roomId ? (
-                            <div className="flex items-center justify-between">
-                              <p>{userDetails?.roomId}</p>
-                              <Button
-                                type="button"
-                                variant={"outline"}
-                                onClick={() => {
-                                  navigator.clipboard.writeText(
-                                    userDetails?.roomId
-                                  );
-                                  toast({
-                                    title: "Room ID copied ...",
-                                  });
-                                }}
-                              >
-                                <i className="fa-solid fa-copy" />
-                              </Button>
-                            </div>
-                          ) : (
-                            <>
-                              <Label htmlFor="username">Your name</Label>
-                              <Input
-                                disabled={
-                                  !userDetails?.isAdmin &&
-                                  Boolean(userDetails?.roomId)
-                                }
-                                id="username"
-                                placeholder="Harvi"
-                                value={userDetails?.name}
-                                onChange={(event) =>
-                                  setUserDetails({
-                                    ...userDetails,
-                                    name: event.target.value,
-                                  })
-                                }
-                              />
-                            </>
-                          )}
-                        </div>
-                      </CardContent>
-                      <CardFooter>
-                        {userDetails?.isAdmin && userDetails?.roomId ? (
-                          <Button
-                            type="button"
-                            className="w-full"
-                            onClick={createRoom}
-                            variant={"destructive"}
-                          >
-                            Delete room
-                          </Button>
-                        ) : (
-                          <Button
-                            type="button"
-                            className="w-full"
-                            onClick={createRoom}
-                            disabled={
-                              userDetails.name.length < 3 ||
-                              (!userDetails?.isAdmin &&
-                                Boolean(userDetails?.roomId))
-                            }
-                          >
-                            Create
-                          </Button>
-                        )}
-                      </CardFooter>
-                    </Card>
-                  </TabsContent>
-                  <TabsContent value="join">
-                    <Card>
-                      <CardHeader>
-                        <CardTitle className="text-center">
-                          Join a room
-                        </CardTitle>
-                      </CardHeader>
-                      <CardContent className="space-y-2">
-                        <div className="space-y-1">
-                          <div>
-                            <Label htmlFor="username">Your name</Label>
-                            <Input
-                              disabled={userDetails?.isAdmin}
-                              id="username"
-                              type="text"
-                              placeholder="Harvi"
-                              value={userDetails?.name}
-                              onChange={(event) =>
-                                setUserDetails({
-                                  ...userDetails,
-                                  name: event.target.value,
-                                })
-                              }
-                            />
-                          </div>
-                          <div>
-                            <Label htmlFor="roomcode">Room ID</Label>
-                            <Input
-                              disabled={userDetails?.isAdmin}
-                              id="roomcode"
-                              type="text"
-                              placeholder="Room code"
-                              value={userDetails.roomId}
-                              onChange={(event) =>
-                                setUserDetails({
-                                  ...userDetails,
-                                  roomId: event.target.value,
-                                })
-                              }
-                            />
-                          </div>
-                        </div>
-                      </CardContent>
-                      <CardFooter>
-                        <Button
-                          disabled={
-                            userDetails.name.length < 3 ||
-                            userDetails.roomId.length < 5 ||
-                            userDetails.isAdmin
-                          }
-                          className="w-full"
-                          onClick={joinRoom}
-                        >
-                          Join
-                        </Button>
-                      </CardFooter>
-                    </Card>
-                  </TabsContent>
-                </Tabs>
-              </DialogContent>
-            </Dialog>
+            <LiveCollaboration />
 
             {/* reset canvas */}
             <ResetCanvas />
