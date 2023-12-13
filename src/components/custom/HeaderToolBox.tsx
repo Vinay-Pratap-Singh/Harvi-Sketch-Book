@@ -48,7 +48,7 @@ const HeaderToolBox = () => {
   }
 
   return (
-    <section className="w-fit flex items-center my-5 py-2 px-4 shadow-md rounded-md space-x-2 absolute z-10">
+    <section className="w-fit flex items-center my-5 py-2 px-4 shadow-md rounded-md space-x-2 absolute z-50 bg-white">
       {/* for lock and unlock */}
       <TooltipProvider>
         <Tooltip>

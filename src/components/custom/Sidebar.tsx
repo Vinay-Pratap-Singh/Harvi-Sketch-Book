@@ -58,6 +58,8 @@ import {
 import io, { Socket } from "socket.io-client";
 import ExportSketch from "./sidebar/ExportSketch";
 import ColorPicker from "./sidebar/ColorPicker";
+import ResetCanvas from "./sidebar/ResetCanvas";
+import SocialMedia from "./sidebar/SocialMedia";
 
 const Sidebar = () => {
   const dispatch = useAppDispatch();
@@ -476,62 +478,13 @@ const Sidebar = () => {
             </Dialog>
 
             {/* reset canvas */}
-            <AlertDialog>
-              <AlertDialogTrigger asChild>
-                <Button
-                  variant={"outline"}
-                  className="hover:bg-mainSecondary w-full flex items-center justify-start gap-2"
-                >
-                  <i className="fa-solid fa-trash" />
-                  <p>Reset the canvas</p>
-                </Button>
-              </AlertDialogTrigger>
-              <AlertDialogContent>
-                <AlertDialogHeader>
-                  <AlertDialogTitle>
-                    Are you sure to reset the canvas?
-                  </AlertDialogTitle>
-                  <AlertDialogDescription>
-                    This action cannot be undone. This will clear all your work
-                    from the sketch board.
-                  </AlertDialogDescription>
-                </AlertDialogHeader>
-                <AlertDialogFooter>
-                  <AlertDialogCancel>Cancel</AlertDialogCancel>
-                  <AlertDialogAction onClick={() => dispatch(resetCanvas())}>
-                    Continue
-                  </AlertDialogAction>
-                </AlertDialogFooter>
-              </AlertDialogContent>
-            </AlertDialog>
+            <ResetCanvas />
           </div>
 
           <Separator />
 
           {/* for social media options */}
-          <div className="space-y-2">
-            <Button
-              variant={"outline"}
-              className="hover:bg-mainSecondary w-full flex items-center justify-start gap-2"
-            >
-              <i className="fa-brands fa-github" />
-              <p>Github</p>
-            </Button>
-            <Button
-              variant={"outline"}
-              className="hover:bg-mainSecondary w-full flex items-center justify-start gap-2"
-            >
-              <i className="fa-brands fa-linkedin" />
-              <p>Linkedin</p>
-            </Button>
-            <Button
-              variant={"outline"}
-              className="hover:bg-mainSecondary w-full flex items-center justify-start gap-2"
-            >
-              <i className="fa-solid fa-bug" />
-              <p>Report a bug</p>
-            </Button>
-          </div>
+          <SocialMedia />
         </div>
       </SheetContent>
     </Sheet>
