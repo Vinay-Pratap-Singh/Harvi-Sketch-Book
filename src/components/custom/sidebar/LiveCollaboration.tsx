@@ -12,10 +12,52 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { toast } from "@/components/ui/use-toast";
-import { useAppSelector } from "@/hooks/redux";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
+import { io } from "socket.io-client";
 
 const LiveCollaboration = () => {
+  const [name, setName] = useState("");
+  const [roomId, setRoomId] = useState("");
+  const [socket, setSocket] = useState<any>(null);
+
+  const createRoom = () => {
+    const mySocket = io(process.env.SERVER_URL || "http://localhost:5000");
+    if (!mySocket) return;
+    setSocket(mySocket);
+    mySocket.emit("createRoom", { name });
+  };
+
+  const joinRoom = () => {
+    const mySocket = io(process.env.SERVER_URL || "http://localhost:5000");
+    if (!mySocket) return;
+    setSocket(mySocket);
+    mySocket.emit("joinRoom", { roomId, name });
+  };
+
+  useEffect(() => {
+    if (!socket) return;
+    socket.on("roomCreated", ({ roomId }: { roomId: string }) => {
+      setRoomId(roomId);
+      toast({
+        title: "Room created successfully",
+        description: `Share your room code "${roomId}" with your friends to join`,
+      });
+    });
+
+    socket.on("userJoin", ({ name }: { name: string }) => {
+      toast({ title: `${name} joined the drawing board` });
+    });
+
+    socket.on("userLeave", ({ name }: { name: string }) => {
+      toast({ title: `${name} joined the drawing board` });
+    });
+
+    // return () => {
+    //
+    //   socket.removeAllListeners();
+    // };
+  }, [socket]);
+
   return (
     <div>
       <Dialog>
@@ -42,11 +84,16 @@ const LiveCollaboration = () => {
                 <CardContent className="space-y-2">
                   <div className="space-y-1">
                     <Label htmlFor="username">Your name</Label>
-                    <Input id="username" placeholder="Harvi" />
+                    <Input
+                      id="username"
+                      placeholder="Harvi"
+                      value={name}
+                      onChange={(event) => setName(event.target.value)}
+                    />
                   </div>
                 </CardContent>
                 <CardFooter>
-                  <Button type="button" className="w-full">
+                  <Button type="button" className="w-full" onClick={createRoom}>
                     Create
                   </Button>
                 </CardFooter>
@@ -61,7 +108,13 @@ const LiveCollaboration = () => {
                   <div className="space-y-1">
                     <div>
                       <Label htmlFor="username">Your name</Label>
-                      <Input id="username" type="text" placeholder="Harvi" />
+                      <Input
+                        id="username"
+                        type="text"
+                        placeholder="Harvi"
+                        value={name}
+                        onChange={(event) => setName(event.target.value)}
+                      />
                     </div>
                     <div>
                       <Label htmlFor="roomcode">Room ID</Label>
@@ -69,12 +122,16 @@ const LiveCollaboration = () => {
                         id="roomcode"
                         type="text"
                         placeholder="Room code"
+                        value={roomId}
+                        onChange={(event) => setRoomId(event.target.value)}
                       />
                     </div>
                   </div>
                 </CardContent>
                 <CardFooter>
-                  <Button className="w-full">Join</Button>
+                  <Button className="w-full" onClick={joinRoom}>
+                    Join
+                  </Button>
                 </CardFooter>
               </Card>
             </TabsContent>

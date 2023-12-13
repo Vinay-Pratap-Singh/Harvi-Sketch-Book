@@ -34,6 +34,7 @@ export interface IInitialCanvasState {
 // for socket slice initial state
 export interface IInitialSocketState {
   isAdmin: boolean;
+  socket: any;
 }
 
 // for export type
