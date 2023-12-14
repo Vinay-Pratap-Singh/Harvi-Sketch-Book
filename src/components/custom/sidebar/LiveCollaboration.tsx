@@ -45,6 +45,13 @@ const LiveCollaboration = () => {
     userRole.current = "user";
   };
 
+  const leaveBoard = () => {
+    socket.emit(leaveBoard, { roomId, name });
+    setName("");
+    setRoomId("");
+    userRole.current = "";
+  };
+
   // function to handle copy room code
   const copyRoomCode = () => {
     navigator.clipboard.writeText(roomId);
@@ -139,7 +146,11 @@ const LiveCollaboration = () => {
                 <CardFooter>
                   {userRole.current === "admin" && roomId ? (
                     <div className="flex items-center gap-3">
-                      <Button type="button" className="w-full">
+                      <Button
+                        type="button"
+                        className="w-full"
+                        onClick={leaveBoard}
+                      >
                         Leave board
                       </Button>
                       <Button
@@ -225,7 +236,7 @@ const LiveCollaboration = () => {
                     <Button
                       variant={"destructive"}
                       className="w-full"
-                      onClick={joinRoom}
+                      onClick={leaveBoard}
                       disabled={name.length < 4 || roomId.length < 5}
                     >
                       Leave board
