@@ -1,13 +1,20 @@
+import socket from "@/helper/socket/socket";
 import { useAppDispatch, useAppSelector } from "@/hooks/redux";
 import useHexToRgba from "@/hooks/useHexToRgba";
 import {
   addCanvasImageData,
   applySketchBookBackgroundColor,
+  renderCanvas,
   setCanvas,
+  updateData,
 } from "@/redux/canvasSlice";
 import { setCurrentShape } from "@/redux/toolkitSlice";
 import React, { useEffect, useRef } from "react";
-import { io } from "socket.io-client";
+import { toast } from "../ui/use-toast";
+import {
+  base64ToImageData,
+  imageDataToBase64,
+} from "@/helper/dataConversion/imageDataToBase64";
 
 const SketchBoard = () => {
   const dispatch = useAppDispatch();
@@ -20,6 +27,10 @@ const SketchBoard = () => {
     shapeFillColor,
     fontType,
   } = useAppSelector((state) => state.toolkit);
+  const { canvas, allCanvasImageData, currentCanvasIndex } = useAppSelector(
+    (state) => state.canvas
+  );
+
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   // for drawing shapes on canvas
   const isDrawing = useRef(false);
@@ -459,7 +470,32 @@ const SketchBoard = () => {
     currentShapeFillColor,
     dispatch,
     fontType,
+    allCanvasImageData,
+    currentCanvasIndex,
   ]);
+
+  useEffect(() => {
+    console.log("effect running");
+    function handleData({ data, index }: { index: number; data: string[] }) {
+      const newData = base64ToImageData(data);
+      dispatch(updateData({ newData, index }));
+      // dispatch(renderCanvas());
+      const canvas = canvasRef.current;
+      if (!canvas) return;
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+      const ctx = canvasRef.current?.getContext("2d");
+      console.log(newData[index]);
+      if (!ctx) return;
+      ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
+      ctx.putImageData(newData[index], 0, 0);
+    }
+    socket.on("receiveSketchBoardData", handleData);
+    return () => {
+      console.log("cleaning");
+      socket.off("receiveSketchBoardData", handleData);
+    };
+  }, [dispatch]);
 
   return <canvas ref={canvasRef}></canvas>;
 };

@@ -12,22 +12,16 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { toast } from "@/components/ui/use-toast";
+import socket from "@/helper/socket/socket";
 import { useAppDispatch, useAppSelector } from "@/hooks/redux";
-import {
-  connectSocket,
-  createNewRoom,
-  deleteRoom,
-  joinNewRoom,
-  setName,
-  setRoomId,
-} from "@/redux/socketSlice";
-import React, { useEffect } from "react";
+
+import React, { useCallback, useEffect, useState } from "react";
 
 const LiveCollaboration = () => {
   const dispatch = useAppDispatch();
-  const { socket, userRole, name, roomId } = useAppSelector(
-    (state) => state.socket
-  );
+  const [name, setName] = useState("");
+  const [roomId, setRoomId] = useState("");
+  const [userRole, setUserRole] = useState("");
 
   // function to handle copy room code
   const copyRoomCode = () => {
@@ -36,34 +30,51 @@ const LiveCollaboration = () => {
   };
 
   useEffect(() => {
-    if (!socket) return;
-    socket.on("roomCreated", ({ roomId }: { roomId: string }) => {
-      dispatch(setRoomId(roomId));
+    function roomCreated({ roomId, name }: { roomId: string; name: string }) {
       toast({
         title: "Room created successfully",
         description: `Share your room code "${roomId}" with your friends to join`,
       });
-    });
+      setRoomId(() => roomId);
+      setUserRole("admin");
+      setName(name);
+      // localStorage.setItem("name", name);
+      localStorage.setItem("roomId", roomId);
+      // localStorage.setItem("userRole", "admin");
+    }
 
-    socket.on("userJoin", ({ name }: { name: string }) => {
+    function userJoin({ name, roomId }: { name: string; roomId: string }) {
       toast({ title: `${name} joined the drawing board` });
-    });
+      setUserRole("user");
+      setName(name);
+      // localStorage.setItem("name", name);
+      localStorage.setItem("roomId", roomId);
+      // localStorage.setItem("userRole", "user");
+    }
 
-    socket.on("userLeave", ({ name }: { name: string }) => {
+    function userLeave({ name }: { name: string }) {
       toast({ title: `${name} left the drawing board` });
-    });
+    }
 
-    socket.on("invalidRoom", ({ message }: { message: string }) => {
+    function invalidRoom({ message }: { message: string }) {
       toast({ title: "Failed to join room", description: message });
-    });
+    }
 
-    socket.on("roomDeleted", ({ message }: { message: string }) => {
+    function roomDeleted({ message }: { message: string }) {
       toast({
         title: message,
       });
-      dispatch(deleteRoom());
-    });
-  }, [socket, dispatch]);
+      setName("");
+      setRoomId("");
+      setUserRole("");
+    }
+
+    socket.on("roomCreated", roomCreated);
+    socket.on("userJoin", userJoin);
+    socket.on("userLeave", userLeave);
+    socket.on("invalidRoom", invalidRoom);
+    socket.on("roomDeleted", roomDeleted);
+  }, [dispatch]);
 
   return (
     <div>
@@ -114,9 +125,7 @@ const LiveCollaboration = () => {
                         id="username"
                         placeholder="Harvi"
                         value={name}
-                        onChange={(event) =>
-                          dispatch(setName(event.target.value))
-                        }
+                        onChange={(event) => setName(event.target.value)}
                       />
                     </div>
                   )}
@@ -127,10 +136,10 @@ const LiveCollaboration = () => {
                       <Button
                         type="button"
                         className="w-full"
-                        onClick={() => {
-                          socket.emit("leaveBoard", { roomId, name });
-                          dispatch(deleteRoom());
-                        }}
+                        // onClick={() => {
+                        //   socket.emit("leaveBoard", { roomId, name });
+                        //   dispatch(deleteRoom());
+                        // }}
                       >
                         Leave board
                       </Button>
@@ -149,8 +158,9 @@ const LiveCollaboration = () => {
                       type="button"
                       className="w-full"
                       onClick={() => {
-                        dispatch(connectSocket());
-                        dispatch(createNewRoom());
+                        if (socket) {
+                          socket.emit("createRoom", { name });
+                        }
                       }}
                     >
                       Create
@@ -194,9 +204,7 @@ const LiveCollaboration = () => {
                             placeholder="Harvi"
                             value={name}
                             disabled={userRole === "admin" && Boolean(roomId)}
-                            onChange={(event) =>
-                              dispatch(setName(event.target.value))
-                            }
+                            onChange={(event) => setName(event.target.value)}
                           />
                         </div>
                         <div>
@@ -207,9 +215,7 @@ const LiveCollaboration = () => {
                             placeholder="Room code"
                             value={roomId}
                             disabled={userRole === "admin" && Boolean(roomId)}
-                            onChange={(event) =>
-                              dispatch(setRoomId(event.target.value))
-                            }
+                            onChange={(event) => setRoomId(event.target.value)}
                           />
                         </div>
                       </>
@@ -221,10 +227,10 @@ const LiveCollaboration = () => {
                     <Button
                       variant={"destructive"}
                       className="w-full"
-                      onClick={() => {
-                        socket.emit("leaveBoard", { roomId, name });
-                        dispatch(deleteRoom());
-                      }}
+                      // onClick={() => {
+                      //   socket.emit("leaveBoard", { roomId, name });
+                      //   dispatch(deleteRoom());
+                      // }}
                       disabled={name.length < 4 || roomId.length < 5}
                     >
                       Leave board
@@ -233,8 +239,9 @@ const LiveCollaboration = () => {
                     <Button
                       className="w-full"
                       onClick={() => {
-                        dispatch(connectSocket());
-                        dispatch(joinNewRoom());
+                        if (socket) {
+                          socket.emit("joinRoom", { roomId, name });
+                        }
                       }}
                       disabled={
                         name.length < 4 ||

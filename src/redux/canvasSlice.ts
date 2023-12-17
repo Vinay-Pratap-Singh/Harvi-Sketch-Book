@@ -1,4 +1,6 @@
+import { imageDataToBase64 } from "@/helper/dataConversion/imageDataToBase64";
 import { IInitialCanvasState } from "@/helper/interface/interface";
+import socket from "@/helper/socket/socket";
 import { PayloadAction, createSlice } from "@reduxjs/toolkit";
 
 const initialState: IInitialCanvasState = {
@@ -25,7 +27,9 @@ export const canvasSlice = createSlice({
 
     addCanvasImageData: (state) => {
       if (!state.canvas) return;
-      const context = state.canvas.getContext("2d");
+      const context = state.canvas.getContext("2d", {
+        willReadFrequently: true,
+      });
       if (!context) return;
       const currentState = context.getImageData(
         0,
@@ -33,20 +37,32 @@ export const canvasSlice = createSlice({
         context.canvas.width,
         context.canvas.height
       );
+
+      if (!state.allCanvasImageData) return;
       state.allCanvasImageData.push(currentState);
       state.currentCanvasIndex = state.allCanvasImageData.length - 1;
+
+      const dataToBeSend = imageDataToBase64(state.allCanvasImageData);
+      socket.emit("sendSketchBoardData", {
+        index: state.currentCanvasIndex,
+        data: dataToBeSend,
+        roomId: localStorage.getItem("roomId"),
+      });
     },
 
     renderCanvas: (state) => {
       if (!state.canvas) return;
-      const context = state.canvas.getContext("2d");
+      const context = state.canvas.getContext("2d", {
+        willReadFrequently: true,
+      });
       if (!context) return;
-      context.clearRect(0, 0, context.canvas.width, context.canvas.height);
+      // context.clearRect(0, 0, context.canvas.width, context.canvas.height);
       context.putImageData(
         state.allCanvasImageData[state.currentCanvasIndex],
         0,
         0
       );
+      console.log(state.allCanvasImageData, state.currentCanvasIndex);
     },
 
     undoOperation: (state) => {
@@ -72,8 +88,9 @@ export const canvasSlice = createSlice({
     },
 
     updateData: (state, action) => {
-      state.allCanvasImageData = action.payload.allCanvasImageData;
-      state.currentCanvasIndex = action.payload.currentCanvasIndex;
+      const { newData, index } = action.payload;
+      state.allCanvasImageData = newData;
+      state.currentCanvasIndex = index;
     },
   },
 });
