@@ -44,3 +44,18 @@ export interface IExportData {
   fileName: string;
   fileType: string;
 }
+
+// interface for shapes arguments
+export interface ICoordinate {
+  startCoordinate: { x: number; y: number };
+  endCoordinate: { x: number; y: number };
+}
+export interface IRectangleArgs {
+  coordinate: ICoordinate;
+  canvas?: HTMLCanvasElement;
+  strokeColor: string;
+  strokeStyle: ILineStroke;
+  currentShapeFillColor: string;
+  strokeWidth: number;
+  roomId?: string;
+}

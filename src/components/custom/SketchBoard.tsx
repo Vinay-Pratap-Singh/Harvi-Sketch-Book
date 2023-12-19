@@ -15,6 +15,8 @@ import {
   base64ToImageData,
   imageDataToBase64,
 } from "@/helper/dataConversion/imageDataToBase64";
+import { drawRectangle } from "@/helper/shapes/drawShapes";
+import { ICoordinate, IRectangleArgs } from "@/helper/interface/interface";
 
 const SketchBoard = () => {
   const dispatch = useAppDispatch();
@@ -118,7 +120,7 @@ const SketchBoard = () => {
       }
 
       case "square": {
-        const coordinate = {
+        const coordinate: ICoordinate = {
           startCoordinate: { x: 0, y: 0 },
           endCoordinate: { x: 0, y: 0 },
         };
@@ -135,28 +137,28 @@ const SketchBoard = () => {
 
         const stopDrawing = () => {
           isDrawing.current = false;
-
-          const { x: startX, y: startY } = coordinate.startCoordinate;
-          const { x: endX, y: endY } = coordinate.endCoordinate;
-          context.strokeStyle = strokeColor;
-          strokeStyle.name === "normal"
-            ? context.setLineDash([])
-            : context.setLineDash([strokeStyle.value ? strokeStyle.value : 0]);
-          context.fillStyle = currentShapeFillColor;
-          context.lineWidth = strokeWidth;
-          context.fillRect(
-            Math.min(startX, endX),
-            Math.min(startY, endY),
-            Math.abs(endX - startX),
-            Math.abs(endY - startY)
-          );
-
-          context.strokeRect(
-            Math.min(startX, endX),
-            Math.min(startY, endY),
-            Math.abs(endX - startX),
-            Math.abs(endY - startY)
-          );
+          console.log("inside stop drawing");
+          // draw shape on canvas
+          drawRectangle({
+            coordinate,
+            canvas,
+            strokeColor,
+            strokeStyle,
+            currentShapeFillColor,
+            strokeWidth,
+          });
+          const roomId = localStorage.getItem("roomId");
+          socket.emit("test", localStorage.getItem("roomId"));
+          // sending rectangle data to other users
+          // socket.emit("sendRectangleData", data);
+          socket.emit("sendRectangleData", {
+            coordinate,
+            strokeColor,
+            strokeStyle,
+            currentShapeFillColor,
+            strokeWidth,
+            roomId: localStorage.getItem("roomId"),
+          });
 
           // storing canvas image data
           dispatch(addCanvasImageData());
@@ -475,27 +477,19 @@ const SketchBoard = () => {
   ]);
 
   useEffect(() => {
-    console.log("effect running");
-    function handleData({ data, index }: { index: number; data: string[] }) {
-      const newData = base64ToImageData(data);
-      dispatch(updateData({ newData, index }));
-      // dispatch(renderCanvas());
-      const canvas = canvasRef.current;
-      if (!canvas) return;
-      canvas.width = window.innerWidth;
-      canvas.height = window.innerHeight;
-      const ctx = canvasRef.current?.getContext("2d");
-      console.log(newData[index]);
-      if (!ctx) return;
-      ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
-      ctx.putImageData(newData[index], 0, 0);
-    }
-    socket.on("receiveSketchBoardData", handleData);
-    return () => {
-      console.log("cleaning");
-      socket.off("receiveSketchBoardData", handleData);
+    const handleReact = (data: IRectangleArgs) => {
+      if (canvas) {
+        data = { ...data, canvas };
+      }
+      drawRectangle(data);
+      // storing canvas image data
+      dispatch(addCanvasImageData());
     };
-  }, [dispatch]);
+    socket.on("receiveRectangleData", handleReact);
+    return () => {
+      socket.off("receiveRectangleData", handleReact);
+    };
+  }, [dispatch, canvas]);
 
   return <canvas ref={canvasRef}></canvas>;
 };
