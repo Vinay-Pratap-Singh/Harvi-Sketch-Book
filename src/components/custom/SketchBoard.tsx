@@ -1,22 +1,16 @@
-import socket from "@/helper/socket/socket";
+// import socket from "@/helper/socket/socket";
 import { useAppDispatch, useAppSelector } from "@/hooks/redux";
 import useHexToRgba from "@/hooks/useHexToRgba";
 import {
   addCanvasImageData,
   applySketchBookBackgroundColor,
-  renderCanvas,
   setCanvas,
-  updateData,
 } from "@/redux/canvasSlice";
 import { setCurrentShape } from "@/redux/toolkitSlice";
 import React, { useEffect, useRef } from "react";
-import { toast } from "../ui/use-toast";
-import {
-  base64ToImageData,
-  imageDataToBase64,
-} from "@/helper/dataConversion/imageDataToBase64";
 import { drawRectangle } from "@/helper/shapes/drawShapes";
 import { ICoordinate, IRectangleArgs } from "@/helper/interface/interface";
+import socket from "@/helper/socket/socket";
 
 const SketchBoard = () => {
   const dispatch = useAppDispatch();
@@ -32,6 +26,7 @@ const SketchBoard = () => {
   const { canvas, allCanvasImageData, currentCanvasIndex } = useAppSelector(
     (state) => state.canvas
   );
+  const { roomId } = useAppSelector((state) => state.user);
 
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   // for drawing shapes on canvas
@@ -137,7 +132,7 @@ const SketchBoard = () => {
 
         const stopDrawing = () => {
           isDrawing.current = false;
-          console.log("inside stop drawing");
+
           // draw shape on canvas
           drawRectangle({
             coordinate,
@@ -147,17 +142,14 @@ const SketchBoard = () => {
             currentShapeFillColor,
             strokeWidth,
           });
-          const roomId = localStorage.getItem("roomId");
-          socket.emit("test", localStorage.getItem("roomId"));
-          // sending rectangle data to other users
-          // socket.emit("sendRectangleData", data);
+
           socket.emit("sendRectangleData", {
             coordinate,
             strokeColor,
             strokeStyle,
             currentShapeFillColor,
             strokeWidth,
-            roomId: localStorage.getItem("roomId"),
+            roomId,
           });
 
           // storing canvas image data
@@ -474,6 +466,7 @@ const SketchBoard = () => {
     fontType,
     allCanvasImageData,
     currentCanvasIndex,
+    roomId,
   ]);
 
   useEffect(() => {
@@ -485,7 +478,9 @@ const SketchBoard = () => {
       // storing canvas image data
       dispatch(addCanvasImageData());
     };
+
     socket.on("receiveRectangleData", handleReact);
+
     return () => {
       socket.off("receiveRectangleData", handleReact);
     };

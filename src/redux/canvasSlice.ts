@@ -1,6 +1,4 @@
-import { imageDataToBase64 } from "@/helper/dataConversion/imageDataToBase64";
 import { IInitialCanvasState } from "@/helper/interface/interface";
-import socket from "@/helper/socket/socket";
 import { PayloadAction, createSlice } from "@reduxjs/toolkit";
 
 const initialState: IInitialCanvasState = {
@@ -41,13 +39,6 @@ export const canvasSlice = createSlice({
       if (!state.allCanvasImageData) return;
       state.allCanvasImageData.push(currentState);
       state.currentCanvasIndex = state.allCanvasImageData.length - 1;
-
-      const dataToBeSend = imageDataToBase64(state.allCanvasImageData);
-      socket.emit("sendSketchBoardData", {
-        index: state.currentCanvasIndex,
-        data: dataToBeSend,
-        roomId: localStorage.getItem("roomId"),
-      });
     },
 
     renderCanvas: (state) => {
@@ -56,13 +47,12 @@ export const canvasSlice = createSlice({
         willReadFrequently: true,
       });
       if (!context) return;
-      // context.clearRect(0, 0, context.canvas.width, context.canvas.height);
+      context.clearRect(0, 0, context.canvas.width, context.canvas.height);
       context.putImageData(
         state.allCanvasImageData[state.currentCanvasIndex],
         0,
         0
       );
-      console.log(state.allCanvasImageData, state.currentCanvasIndex);
     },
 
     undoOperation: (state) => {

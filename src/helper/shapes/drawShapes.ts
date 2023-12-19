@@ -1,5 +1,4 @@
 import { IRectangleArgs } from "../interface/interface";
-import socket from "../socket/socket";
 
 export const drawRectangle = ({
   coordinate,
@@ -9,7 +8,6 @@ export const drawRectangle = ({
   currentShapeFillColor,
   strokeWidth,
 }: IRectangleArgs) => {
-  console.log("inside rect shape");
   if (!canvas) return;
   const context = canvas.getContext("2d");
   if (!context) return;

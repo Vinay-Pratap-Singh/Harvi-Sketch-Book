@@ -45,6 +45,13 @@ export interface IExportData {
   fileType: string;
 }
 
+// for user slice initial data
+export interface IUserData {
+  name: string;
+  userRole: string;
+  roomId: string;
+}
+
 // interface for shapes arguments
 export interface ICoordinate {
   startCoordinate: { x: number; y: number };
