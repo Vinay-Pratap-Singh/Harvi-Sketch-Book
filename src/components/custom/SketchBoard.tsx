@@ -9,9 +9,11 @@ import {
 import { setCurrentShape } from "@/redux/toolkitSlice";
 import React, { useEffect, useRef } from "react";
 import {
+  beginPathFunc,
   drawArrow,
   drawCircle,
   drawLine,
+  drawPathFunc,
   drawRectangle,
   writeText,
 } from "@/helper/shapes/drawShapes";
@@ -79,11 +81,12 @@ const SketchBoard = () => {
         const startDrawing = (event: MouseEvent) => {
           isDrawing.current = true;
           if (context) {
-            context.beginPath();
-            context.moveTo(
-              event.clientX - canvas.offsetLeft,
-              event.clientY - canvas.offsetTop
-            );
+            beginPathFunc({
+              canvas,
+              x: event.clientX - canvas.offsetLeft,
+              y: event.clientY - canvas.offsetTop,
+            });
+
             if (socket && roomId) {
               socket.emit("sendBeginPath", {
                 roomId,
@@ -109,6 +112,14 @@ const SketchBoard = () => {
               event.clientY - canvas.offsetTop
             );
             context.stroke();
+            drawPathFunc({
+              canvas,
+              strokeColor,
+              strokeStyle,
+              strokeWidth,
+              x: event.clientX - canvas.offsetLeft,
+              y: event.clientY - canvas.offsetTop,
+            });
 
             if (socket && roomId) {
               socket.emit("sendDrawPath", {
@@ -572,28 +583,17 @@ const SketchBoard = () => {
     };
 
     const handleBeginPath = (data: IBeginPathPencil) => {
-      const canvas = canvasRef.current;
-      if (!canvas) return;
-      const context = canvas.getContext("2d");
-      if (!context) return;
-      context.beginPath();
-      context.moveTo(data.x, data.y);
+      if (canvas) {
+        data = { ...data, canvas };
+      }
+      beginPathFunc(data);
     };
 
     const handleDrawPath = (data: IDrawPathPencil) => {
-      const canvas = canvasRef.current;
-      if (!canvas) return;
-      const context = canvas.getContext("2d");
-      if (!context) return;
-      context.strokeStyle = data.strokeColor;
-      context.lineWidth = data.strokeWidth;
-      data.strokeStyle.name === "normal"
-        ? context.setLineDash([])
-        : context.setLineDash([
-            data.strokeStyle.value ? data.strokeStyle.value : 0,
-          ]);
-      context.lineTo(data.x, data.y);
-      context.stroke();
+      if (canvas) {
+        data = { ...data, canvas };
+      }
+      drawPathFunc(data);
     };
 
     const handleClosePath = () => {

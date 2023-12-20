@@ -39,7 +39,7 @@ const HeaderToolBox = () => {
     } else if (currentShape === "eraser") {
       dispatch(setCurrentShape("eraser"));
       dispatch(setStrokeColor(color));
-      dispatch(setStrokeStyle({ ...STROKE_LINE_STYLE[0] }));
+      dispatch(setStrokeStyle(STROKE_LINE_STYLE[0]));
     } else {
       dispatch(setCurrentShape(shape));
       dispatch(setStrokeColor(color));

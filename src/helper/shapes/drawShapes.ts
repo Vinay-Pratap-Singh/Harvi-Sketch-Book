@@ -1,4 +1,9 @@
-import { IShapesArgs, IWriteText } from "../interface/interface";
+import {
+  IBeginPathPencil,
+  IDrawPathPencil,
+  IShapesArgs,
+  IWriteText,
+} from "../interface/interface";
 
 export const drawRectangle = ({
   coordinate,
@@ -149,4 +154,32 @@ export const writeText = ({
   context.font = `${strokeWidth}px ${fontType}`;
   context.fillStyle = strokeColor;
   context.fillText(text, offsetX, offsetY);
+};
+
+export const beginPathFunc = ({ canvas, x, y }: IBeginPathPencil) => {
+  if (!canvas) return;
+  const context = canvas.getContext("2d");
+  if (!context) return;
+  context.beginPath();
+  context.moveTo(x, y);
+};
+
+export const drawPathFunc = ({
+  strokeColor,
+  strokeStyle,
+  strokeWidth,
+  x,
+  y,
+  canvas,
+}: IDrawPathPencil) => {
+  if (!canvas) return;
+  const context = canvas.getContext("2d");
+  if (!context) return;
+  context.strokeStyle = strokeColor;
+  context.lineWidth = strokeWidth;
+  strokeStyle.name === "normal"
+    ? context.setLineDash([])
+    : context.setLineDash([strokeStyle.value ? strokeStyle.value : 0]);
+  context.lineTo(x, y);
+  context.stroke();
 };

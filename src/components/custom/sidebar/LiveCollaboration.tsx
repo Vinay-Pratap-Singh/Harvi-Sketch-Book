@@ -67,7 +67,7 @@ const LiveCollaboration = () => {
     socket.on("invalidRoom", invalidRoom);
     socket.on("roomDeleted", roomDeleted);
   }, [dispatch]);
-  console.log(userRole);
+
   return (
     <div>
       <Dialog>
