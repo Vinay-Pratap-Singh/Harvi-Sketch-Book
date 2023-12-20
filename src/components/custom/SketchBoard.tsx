@@ -16,7 +16,9 @@ import {
   writeText,
 } from "@/helper/shapes/drawShapes";
 import {
+  IBeginPathPencil,
   ICoordinate,
+  IDrawPathPencil,
   IShapesArgs,
   IWriteText,
 } from "@/helper/interface/interface";
@@ -82,6 +84,13 @@ const SketchBoard = () => {
               event.clientX - canvas.offsetLeft,
               event.clientY - canvas.offsetTop
             );
+            if (socket && roomId) {
+              socket.emit("sendBeginPath", {
+                roomId,
+                x: event.clientX - canvas.offsetLeft,
+                y: event.clientY - canvas.offsetTop,
+              });
+            }
           }
         };
 
@@ -100,6 +109,17 @@ const SketchBoard = () => {
               event.clientY - canvas.offsetTop
             );
             context.stroke();
+
+            if (socket && roomId) {
+              socket.emit("sendDrawPath", {
+                roomId,
+                strokeColor,
+                strokeWidth,
+                strokeStyle,
+                x: event.clientX - canvas.offsetLeft,
+                y: event.clientY - canvas.offsetTop,
+              });
+            }
           }
         };
 
@@ -107,6 +127,9 @@ const SketchBoard = () => {
           isDrawing.current = false;
           if (context) {
             context.closePath();
+            if (socket && roomId) {
+              socket.emit("sendClosePath", { roomId });
+            }
 
             // storing canvas image data
             dispatch(addCanvasImageData());
@@ -470,6 +493,7 @@ const SketchBoard = () => {
             );
             // storing canvas image data
             dispatch(addCanvasImageData());
+            console.log("added image data");
           });
           input.click();
         };
@@ -547,11 +571,50 @@ const SketchBoard = () => {
       dispatch(addCanvasImageData());
     };
 
+    const handleBeginPath = (data: IBeginPathPencil) => {
+      const canvas = canvasRef.current;
+      if (!canvas) return;
+      const context = canvas.getContext("2d");
+      if (!context) return;
+      context.beginPath();
+      context.moveTo(data.x, data.y);
+    };
+
+    const handleDrawPath = (data: IDrawPathPencil) => {
+      const canvas = canvasRef.current;
+      if (!canvas) return;
+      const context = canvas.getContext("2d");
+      if (!context) return;
+      context.strokeStyle = data.strokeColor;
+      context.lineWidth = data.strokeWidth;
+      data.strokeStyle.name === "normal"
+        ? context.setLineDash([])
+        : context.setLineDash([
+            data.strokeStyle.value ? data.strokeStyle.value : 0,
+          ]);
+      context.lineTo(data.x, data.y);
+      context.stroke();
+    };
+
+    const handleClosePath = () => {
+      const canvas = canvasRef.current;
+      if (!canvas) return;
+      const context = canvas.getContext("2d");
+      if (!context) return;
+      context.closePath();
+
+      // storing canvas image data
+      dispatch(addCanvasImageData());
+    };
+
     socket.on("receiveRectangleData", handleReact);
     socket.on("receiveCircleData", handleCircle);
     socket.on("receiveArrowData", handleArrow);
     socket.on("receiveLineData", handleLine);
     socket.on("receiveWriteTextData", handleWriteText);
+    socket.on("receiveBeginPath", handleBeginPath);
+    socket.on("receiveDrawPath", handleDrawPath);
+    socket.on("receiveClosePath", handleClosePath);
 
     return () => {
       socket.off("receiveRectangleData", handleReact);
@@ -559,6 +622,9 @@ const SketchBoard = () => {
       socket.off("receiveArrowData", handleArrow);
       socket.off("receiveLineData", handleLine);
       socket.off("receiveWriteTextData", handleWriteText);
+      socket.off("receiveBeginPath", handleBeginPath);
+      socket.off("receiveDrawPath", handleDrawPath);
+      socket.off("receiveClosePath", handleClosePath);
     };
   }, [dispatch, canvas]);
 

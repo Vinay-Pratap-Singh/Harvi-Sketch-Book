@@ -78,3 +78,20 @@ export interface IWriteText {
   canvas?: HTMLCanvasElement;
   roomId?: string;
 }
+
+// for begin path coordinates of pencil
+export interface IBeginPathPencil {
+  roomId: string;
+  x: number;
+  y: number;
+}
+
+// for drawing path coordinates and data from socket
+export interface IDrawPathPencil {
+  roomId: string;
+  strokeColor: string;
+  strokeWidth: number;
+  strokeStyle: ILineStroke;
+  x: number;
+  y: number;
+}
