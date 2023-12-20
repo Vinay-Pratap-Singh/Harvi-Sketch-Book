@@ -8,8 +8,12 @@ import {
 } from "@/redux/canvasSlice";
 import { setCurrentShape } from "@/redux/toolkitSlice";
 import React, { useEffect, useRef } from "react";
-import { drawRectangle } from "@/helper/shapes/drawShapes";
-import { ICoordinate, IRectangleArgs } from "@/helper/interface/interface";
+import {
+  drawArrow,
+  drawCircle,
+  drawRectangle,
+} from "@/helper/shapes/drawShapes";
+import { ICoordinate, IShapesArgs } from "@/helper/interface/interface";
 import socket from "@/helper/socket/socket";
 
 const SketchBoard = () => {
@@ -143,14 +147,16 @@ const SketchBoard = () => {
             strokeWidth,
           });
 
-          socket.emit("sendRectangleData", {
-            coordinate,
-            strokeColor,
-            strokeStyle,
-            currentShapeFillColor,
-            strokeWidth,
-            roomId,
-          });
+          if (roomId && socket) {
+            socket.emit("sendRectangleData", {
+              coordinate,
+              strokeColor,
+              strokeStyle,
+              currentShapeFillColor,
+              strokeWidth,
+              roomId,
+            });
+          }
 
           // storing canvas image data
           dispatch(addCanvasImageData());
@@ -192,23 +198,27 @@ const SketchBoard = () => {
 
         const stopDrawing = () => {
           isDrawing.current = false;
-          const { x: startX, y: startY } = coordinate.startCoordinate;
-          const { x: endX, y: endY } = coordinate.endCoordinate;
-          const radius = Math.sqrt(
-            Math.pow(endX - startX, 2) + Math.pow(endY - startY, 2)
-          );
 
-          context.strokeStyle = strokeColor;
-          strokeStyle.name === "normal"
-            ? context.setLineDash([])
-            : context.setLineDash([strokeStyle.value ? strokeStyle.value : 0]);
-          context.fillStyle = currentShapeFillColor;
-          context.lineWidth = strokeWidth;
-          context.beginPath();
-          context.arc(startX, startY, radius, 0, 2 * Math.PI);
-          context.stroke();
-          context.fill();
-          context.closePath();
+          // draw shape on canvas
+          drawCircle({
+            coordinate,
+            canvas,
+            strokeColor,
+            strokeStyle,
+            currentShapeFillColor,
+            strokeWidth,
+          });
+
+          if (roomId && socket) {
+            socket.emit("sendCircleData", {
+              coordinate,
+              strokeColor,
+              strokeStyle,
+              currentShapeFillColor,
+              strokeWidth,
+              roomId,
+            });
+          }
 
           // storing canvas image data
           dispatch(addCanvasImageData());
@@ -250,38 +260,27 @@ const SketchBoard = () => {
 
         const stopDrawing = () => {
           isDrawing.current = false;
-          const { x: startX, y: startY } = coordinate.startCoordinate;
-          const { x: endX, y: endY } = coordinate.endCoordinate;
 
-          // Draw the arrow
-          context.beginPath();
-          strokeStyle.name === "normal"
-            ? context.setLineDash([])
-            : context.setLineDash([strokeStyle.value ? strokeStyle.value : 0]);
-          context.moveTo(startX, startY);
-          context.lineTo(endX, endY);
-          context.lineWidth = strokeWidth;
-          context.strokeStyle = strokeColor;
-          context.stroke();
+          // draw shape on canvas
+          drawArrow({
+            coordinate,
+            canvas,
+            strokeColor,
+            strokeStyle,
+            currentShapeFillColor,
+            strokeWidth,
+          });
 
-          const angle = Math.atan2(endY - startY, endX - startX);
-          const arrowSize =
-            strokeWidth < 10 ? strokeWidth + 15 : strokeWidth + 30;
-
-          // Calculate positions for both sides of the arrowhead
-          const arrowLeftX = endX - arrowSize * Math.cos(angle + Math.PI / 6);
-          const arrowLeftY = endY - arrowSize * Math.sin(angle + Math.PI / 6);
-          const arrowRightX = endX - arrowSize * Math.cos(angle - Math.PI / 6);
-          const arrowRightY = endY - arrowSize * Math.sin(angle - Math.PI / 6);
-
-          // Draw the arrowhead
-          context.beginPath();
-          context.moveTo(arrowLeftX, arrowLeftY);
-          context.lineTo(endX, endY);
-          context.lineTo(arrowRightX, arrowRightY);
-          context.closePath();
-          context.fillStyle = strokeColor;
-          context.fill();
+          if (roomId && socket) {
+            socket.emit("sendArrowData", {
+              coordinate,
+              strokeColor,
+              strokeStyle,
+              currentShapeFillColor,
+              strokeWidth,
+              roomId,
+            });
+          }
 
           // storing canvas image data
           dispatch(addCanvasImageData());
@@ -470,7 +469,7 @@ const SketchBoard = () => {
   ]);
 
   useEffect(() => {
-    const handleReact = (data: IRectangleArgs) => {
+    const handleReact = (data: IShapesArgs) => {
       if (canvas) {
         data = { ...data, canvas };
       }
@@ -479,10 +478,32 @@ const SketchBoard = () => {
       dispatch(addCanvasImageData());
     };
 
+    const handleCircle = (data: IShapesArgs) => {
+      if (canvas) {
+        data = { ...data, canvas };
+      }
+      drawCircle(data);
+      // storing canvas image data
+      dispatch(addCanvasImageData());
+    };
+
+    const handleArrow = (data: IShapesArgs) => {
+      if (canvas) {
+        data = { ...data, canvas };
+      }
+      drawArrow(data);
+      // storing canvas image data
+      dispatch(addCanvasImageData());
+    };
+
     socket.on("receiveRectangleData", handleReact);
+    socket.on("receiveCircleData", handleCircle);
+    socket.on("receiveArrowData", handleArrow);
 
     return () => {
       socket.off("receiveRectangleData", handleReact);
+      socket.off("receiveCircleData", handleCircle);
+      socket.off("receiveArrowData", handleArrow);
     };
   }, [dispatch, canvas]);
 

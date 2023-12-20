@@ -1,4 +1,4 @@
-import { IRectangleArgs } from "../interface/interface";
+import { IShapesArgs } from "../interface/interface";
 
 export const drawRectangle = ({
   coordinate,
@@ -7,7 +7,7 @@ export const drawRectangle = ({
   strokeStyle,
   currentShapeFillColor,
   strokeWidth,
-}: IRectangleArgs) => {
+}: IShapesArgs) => {
   if (!canvas) return;
   const context = canvas.getContext("2d");
   if (!context) return;
@@ -32,4 +32,78 @@ export const drawRectangle = ({
     Math.abs(endX - startX),
     Math.abs(endY - startY)
   );
+};
+
+export const drawCircle = ({
+  coordinate,
+  canvas,
+  strokeColor,
+  strokeStyle,
+  currentShapeFillColor,
+  strokeWidth,
+}: IShapesArgs) => {
+  if (!canvas) return;
+  const context = canvas.getContext("2d");
+  if (!context) return;
+  const { x: startX, y: startY } = coordinate.startCoordinate;
+  const { x: endX, y: endY } = coordinate.endCoordinate;
+  const radius = Math.sqrt(
+    Math.pow(endX - startX, 2) + Math.pow(endY - startY, 2)
+  );
+
+  context.strokeStyle = strokeColor;
+  strokeStyle.name === "normal"
+    ? context.setLineDash([])
+    : context.setLineDash([strokeStyle.value ? strokeStyle.value : 0]);
+  context.fillStyle = currentShapeFillColor;
+  context.lineWidth = strokeWidth;
+  context.beginPath();
+  context.arc(startX, startY, radius, 0, 2 * Math.PI);
+  context.stroke();
+  context.fill();
+  context.closePath();
+};
+
+export const drawArrow = ({
+  coordinate,
+  canvas,
+  strokeColor,
+  strokeStyle,
+  currentShapeFillColor,
+  strokeWidth,
+}: IShapesArgs) => {
+  if (!canvas) return;
+  const context = canvas.getContext("2d");
+  if (!context) return;
+  const { x: startX, y: startY } = coordinate.startCoordinate;
+  const { x: endX, y: endY } = coordinate.endCoordinate;
+
+  // Draw the arrow
+  context.beginPath();
+  strokeStyle.name === "normal"
+    ? context.setLineDash([])
+    : context.setLineDash([strokeStyle.value ? strokeStyle.value : 0]);
+  context.moveTo(startX, startY);
+  context.lineTo(endX, endY);
+  context.lineWidth = strokeWidth;
+  context.strokeStyle = strokeColor;
+  context.stroke();
+
+  const angle = Math.atan2(endY - startY, endX - startX);
+  const arrowSize = strokeWidth < 10 ? strokeWidth + 15 : strokeWidth + 30;
+
+  // Calculate positions for both sides of the arrowhead
+  const arrowLeftX = endX - arrowSize * Math.cos(angle + Math.PI / 6);
+  const arrowLeftY = endY - arrowSize * Math.sin(angle + Math.PI / 6);
+  const arrowRightX = endX - arrowSize * Math.cos(angle - Math.PI / 6);
+  const arrowRightY = endY - arrowSize * Math.sin(angle - Math.PI / 6);
+
+  // Draw the arrowhead
+  context.beginPath();
+  context.moveTo(arrowLeftX, arrowLeftY);
+  context.lineTo(endX, endY);
+  context.lineTo(arrowRightX, arrowRightY);
+  context.closePath();
+  context.fillStyle = strokeColor;
+  context.fill();
 };

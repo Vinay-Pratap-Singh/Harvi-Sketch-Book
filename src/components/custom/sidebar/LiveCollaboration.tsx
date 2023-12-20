@@ -15,7 +15,7 @@ import { toast } from "@/components/ui/use-toast";
 import socket from "@/helper/socket/socket";
 // import socket from "@/helper/socket/socket";
 import { useAppDispatch, useAppSelector } from "@/hooks/redux";
-import { leaveRoom, setName, setRoomId, setUserRole } from "@/redux/userSlice";
+import { setName, setRoomId, setUserRole } from "@/redux/userSlice";
 
 import React, { useEffect, useState } from "react";
 
@@ -49,11 +49,6 @@ const LiveCollaboration = () => {
       toast({ title: `${name} left the drawing board` });
     }
 
-    function userLeaveSelf({ message }: { message: string }) {
-      toast({ title: message });
-      dispatch(leaveRoom());
-    }
-
     function invalidRoom({ message }: { message: string }) {
       toast({ title: "Failed to join room", description: message });
     }
@@ -62,17 +57,17 @@ const LiveCollaboration = () => {
       toast({
         title: message,
       });
-      dispatch(leaveRoom());
+      // dispatch(setRoomId(""));
+      // dispatch(setUserRole(""));
     }
 
     socket.on("roomCreated", roomCreated);
     socket.on("userJoin", userJoin);
     socket.on("userLeave", userLeave);
-    socket.on("userLeaveSelf", userLeaveSelf);
     socket.on("invalidRoom", invalidRoom);
     socket.on("roomDeleted", roomDeleted);
   }, [dispatch]);
-
+  console.log(userRole);
   return (
     <div>
       <Dialog>
@@ -137,6 +132,8 @@ const LiveCollaboration = () => {
                         className="w-full"
                         onClick={() => {
                           socket.emit("leaveBoard", { roomId, name });
+                          dispatch(setRoomId(""));
+                          // dispatch(setUserRole(""));
                         }}
                       >
                         Leave board
@@ -225,9 +222,11 @@ const LiveCollaboration = () => {
                     <Button
                       variant={"destructive"}
                       className="w-full"
-                      onClick={() =>
-                        socket.emit("leaveBoard", { roomId, name })
-                      }
+                      onClick={() => {
+                        socket.emit("leaveBoard", { roomId, name });
+                        dispatch(setRoomId(""));
+                        // dispatch(setUserRole(""));
+                      }}
                       disabled={name.length < 4 || roomId.length < 5}
                     >
                       Leave board

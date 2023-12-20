@@ -57,7 +57,7 @@ export interface ICoordinate {
   startCoordinate: { x: number; y: number };
   endCoordinate: { x: number; y: number };
 }
-export interface IRectangleArgs {
+export interface IShapesArgs {
   coordinate: ICoordinate;
   canvas?: HTMLCanvasElement;
   strokeColor: string;
