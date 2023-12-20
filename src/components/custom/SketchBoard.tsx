@@ -11,9 +11,15 @@ import React, { useEffect, useRef } from "react";
 import {
   drawArrow,
   drawCircle,
+  drawLine,
   drawRectangle,
+  writeText,
 } from "@/helper/shapes/drawShapes";
-import { ICoordinate, IShapesArgs } from "@/helper/interface/interface";
+import {
+  ICoordinate,
+  IShapesArgs,
+  IWriteText,
+} from "@/helper/interface/interface";
 import socket from "@/helper/socket/socket";
 
 const SketchBoard = () => {
@@ -323,19 +329,26 @@ const SketchBoard = () => {
         const stopDrawing = () => {
           isDrawing.current = false;
 
-          const { x: startX, y: startY } = coordinate.startCoordinate;
-          const { x: endX, y: endY } = coordinate.endCoordinate;
+          // draw shape on canvas
+          drawLine({
+            coordinate,
+            canvas,
+            strokeColor,
+            strokeStyle,
+            currentShapeFillColor,
+            strokeWidth,
+          });
 
-          // Draw the line
-          context.beginPath();
-          strokeStyle.name === "normal"
-            ? context.setLineDash([])
-            : context.setLineDash([strokeStyle.value ? strokeStyle.value : 0]);
-          context.moveTo(startX, startY);
-          context.lineTo(endX, endY);
-          context.lineWidth = strokeWidth;
-          context.strokeStyle = strokeColor;
-          context.stroke();
+          if (roomId && socket) {
+            socket.emit("sendLineData", {
+              coordinate,
+              strokeColor,
+              strokeStyle,
+              currentShapeFillColor,
+              strokeWidth,
+              roomId,
+            });
+          }
 
           // storing canvas image data
           dispatch(addCanvasImageData());
@@ -382,10 +395,28 @@ const SketchBoard = () => {
             // Remove the contentEditable div from the body
             document.body.removeChild(textInput);
 
-            // Draw the entered text on the canvas
-            context.font = `${strokeWidth}px ${fontType}`;
-            context.fillStyle = strokeColor;
-            context.fillText(text, offsetX, offsetY);
+            // Write the entered text on the canvas
+            writeText({
+              canvas,
+              fontType,
+              offsetX,
+              offsetY,
+              strokeColor,
+              strokeWidth,
+              text,
+            });
+
+            if (socket && roomId) {
+              socket.emit("sendWriteTextData", {
+                fontType,
+                offsetX,
+                offsetY,
+                strokeColor,
+                strokeWidth,
+                text,
+                roomId,
+              });
+            }
 
             // changing the current shape to null
             dispatch(setCurrentShape(null));
@@ -496,14 +527,38 @@ const SketchBoard = () => {
       dispatch(addCanvasImageData());
     };
 
+    const handleLine = (data: IShapesArgs) => {
+      if (canvas) {
+        data = { ...data, canvas };
+      }
+      drawLine(data);
+      // storing canvas image data
+      dispatch(addCanvasImageData());
+    };
+
+    const handleWriteText = (data: IWriteText) => {
+      if (canvas) {
+        data = { ...data, canvas };
+      }
+      writeText(data);
+      // changing the current shape to null
+      dispatch(setCurrentShape(null));
+      // storing canvas image data
+      dispatch(addCanvasImageData());
+    };
+
     socket.on("receiveRectangleData", handleReact);
     socket.on("receiveCircleData", handleCircle);
     socket.on("receiveArrowData", handleArrow);
+    socket.on("receiveLineData", handleLine);
+    socket.on("receiveWriteTextData", handleWriteText);
 
     return () => {
       socket.off("receiveRectangleData", handleReact);
       socket.off("receiveCircleData", handleCircle);
       socket.off("receiveArrowData", handleArrow);
+      socket.off("receiveLineData", handleLine);
+      socket.off("receiveWriteTextData", handleWriteText);
     };
   }, [dispatch, canvas]);
 

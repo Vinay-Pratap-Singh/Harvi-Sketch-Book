@@ -1,4 +1,4 @@
-import { IShapesArgs } from "../interface/interface";
+import { IShapesArgs, IWriteText } from "../interface/interface";
 
 export const drawRectangle = ({
   coordinate,
@@ -106,4 +106,47 @@ export const drawArrow = ({
   context.closePath();
   context.fillStyle = strokeColor;
   context.fill();
+};
+
+export const drawLine = ({
+  coordinate,
+  canvas,
+  strokeColor,
+  strokeStyle,
+  currentShapeFillColor,
+  strokeWidth,
+}: IShapesArgs) => {
+  if (!canvas) return;
+  const context = canvas.getContext("2d");
+  if (!context) return;
+  const { x: startX, y: startY } = coordinate.startCoordinate;
+  const { x: endX, y: endY } = coordinate.endCoordinate;
+
+  // Draw the line
+  context.beginPath();
+  strokeStyle.name === "normal"
+    ? context.setLineDash([])
+    : context.setLineDash([strokeStyle.value ? strokeStyle.value : 0]);
+  context.moveTo(startX, startY);
+  context.lineTo(endX, endY);
+  context.lineWidth = strokeWidth;
+  context.strokeStyle = strokeColor;
+  context.stroke();
+};
+
+export const writeText = ({
+  text,
+  offsetX,
+  offsetY,
+  fontType,
+  strokeColor,
+  strokeWidth,
+  canvas,
+}: IWriteText) => {
+  if (!canvas) return;
+  const context = canvas.getContext("2d");
+  if (!context) return;
+  context.font = `${strokeWidth}px ${fontType}`;
+  context.fillStyle = strokeColor;
+  context.fillText(text, offsetX, offsetY);
 };
