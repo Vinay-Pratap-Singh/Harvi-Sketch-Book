@@ -477,15 +477,17 @@ const SketchBoard = () => {
             y: number
           ) => {
             if (!event.target) return;
-            const img = new Image();
             const file = event.target?.files?.[0];
             if (file) {
               const reader = new FileReader();
               reader.onload = (e) => {
-                img.onload = () => {
-                  context?.drawImage(img, x, y, 200, 200);
+                const myImage = document.createElement("img");
+                myImage.src = e.target?.result as string;
+                myImage.onload = () => {
+                  context?.drawImage(myImage, x, y, 200, 200);
+                  // storing canvas image data
+                  dispatch(addCanvasImageData());
                 };
-                img.src = e.target?.result as string;
               };
               reader.readAsDataURL(file);
             }
@@ -502,9 +504,6 @@ const SketchBoard = () => {
               offsetX,
               offsetY
             );
-            // storing canvas image data
-            dispatch(addCanvasImageData());
-            console.log("added image data");
           });
           input.click();
         };
