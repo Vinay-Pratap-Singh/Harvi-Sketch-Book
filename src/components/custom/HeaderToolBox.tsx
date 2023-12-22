@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from "react";
+import React, { useEffect } from "react";
 import { Button } from "../ui/button";
 import { Separator } from "../ui/separator";
 import {
@@ -25,11 +25,14 @@ import {
   renderCanvas,
   undoOperation,
 } from "@/redux/canvasSlice";
+import socket from "@/helper/socket/socket";
 
 const HeaderToolBox = () => {
   const dispatch = useAppDispatch();
   const { isCanvasLocked, currentShape, sketchBookBackground, strokeWidth } =
     useAppSelector((state) => state.toolkit);
+  const { currentCanvasIndex } = useAppSelector((state) => state.canvas);
+  const { roomId } = useAppSelector((state) => state.user);
 
   // function to set and unset the shape
   function handleShapeSelection(shape: string, color: string, width: number) {
@@ -46,6 +49,22 @@ const HeaderToolBox = () => {
       dispatch(setStrokeWidth(width));
     }
   }
+
+  useEffect(() => {
+    function handleIndex({ operation }: { operation: string }) {
+      if (operation === "undo") {
+        dispatch(undoOperation());
+      } else if (operation === "redo") {
+        dispatch(redoOperation());
+      }
+      dispatch(renderCanvas());
+    }
+    socket.on("receiveIndex", handleIndex);
+
+    return () => {
+      socket.off("receiveIndex", handleIndex);
+    };
+  }, [dispatch, roomId]);
 
   return (
     <section className="w-fit flex items-center my-5 py-2 px-4 shadow-md rounded-md space-x-2 absolute z-50 bg-white">
@@ -276,6 +295,9 @@ const HeaderToolBox = () => {
               onClick={() => {
                 dispatch(undoOperation());
                 dispatch(renderCanvas());
+                if (socket && roomId) {
+                  socket.emit("sendIndex", { operation: "undo", roomId });
+                }
               }}
               disabled={isCanvasLocked}
               variant={"ghost"}
@@ -299,6 +321,9 @@ const HeaderToolBox = () => {
               onClick={() => {
                 dispatch(redoOperation());
                 dispatch(renderCanvas());
+                if (socket && roomId) {
+                  socket.emit("sendIndex", { operation: "redo", roomId });
+                }
               }}
               disabled={isCanvasLocked}
               variant={"ghost"}

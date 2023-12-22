@@ -1,4 +1,5 @@
 import { IInitialCanvasState } from "@/helper/interface/interface";
+import socket from "@/helper/socket/socket";
 import { PayloadAction, createSlice } from "@reduxjs/toolkit";
 
 const initialState: IInitialCanvasState = {
@@ -76,12 +77,6 @@ export const canvasSlice = createSlice({
       state.allCanvasImageData = [];
       state.currentCanvasIndex = -1;
     },
-
-    updateData: (state, action) => {
-      const { newData, index } = action.payload;
-      state.allCanvasImageData = newData;
-      state.currentCanvasIndex = index;
-    },
   },
 });
 
@@ -93,6 +88,5 @@ export const {
   undoOperation,
   redoOperation,
   resetCanvas,
-  updateData,
 } = canvasSlice.actions;
 export default canvasSlice.reducer;
