@@ -487,6 +487,16 @@ const SketchBoard = () => {
                   context?.drawImage(myImage, x, y, 200, 200);
                   // storing canvas image data
                   dispatch(addCanvasImageData());
+
+                  // emitting the image data
+                  if (socket && roomId) {
+                    socket.emit("sendImageData", {
+                      url: e.target?.result as string,
+                      x,
+                      y,
+                      roomId,
+                    });
+                  }
                 };
               };
               reader.readAsDataURL(file);
@@ -606,6 +616,28 @@ const SketchBoard = () => {
       dispatch(addCanvasImageData());
     };
 
+    const handleImageData = ({
+      url,
+      x,
+      y,
+    }: {
+      url: string;
+      x: number;
+      y: number;
+    }) => {
+      const myImage = document.createElement("img");
+      const canvas = canvasRef.current;
+      if (!canvas) return;
+      const context = canvas.getContext("2d");
+      if (!context) return;
+      myImage.src = url;
+      myImage.onload = () => {
+        context?.drawImage(myImage, x, y, 200, 200);
+        // storing canvas image data
+        dispatch(addCanvasImageData());
+      };
+    };
+
     socket.on("receiveRectangleData", handleReact);
     socket.on("receiveCircleData", handleCircle);
     socket.on("receiveArrowData", handleArrow);
@@ -614,6 +646,7 @@ const SketchBoard = () => {
     socket.on("receiveBeginPath", handleBeginPath);
     socket.on("receiveDrawPath", handleDrawPath);
     socket.on("receiveClosePath", handleClosePath);
+    socket.on("receiveImageData", handleImageData);
 
     return () => {
       socket.off("receiveRectangleData", handleReact);
@@ -624,6 +657,7 @@ const SketchBoard = () => {
       socket.off("receiveBeginPath", handleBeginPath);
       socket.off("receiveDrawPath", handleDrawPath);
       socket.off("receiveClosePath", handleClosePath);
+      socket.off("receiveImageData", handleImageData);
     };
   }, [dispatch, canvas]);
 
