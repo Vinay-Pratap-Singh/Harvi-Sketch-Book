@@ -51,7 +51,10 @@ const Sidebar = () => {
 
   return (
     <Sheet>
-      <SheetTrigger asChild className="absolute left-5 top-5">
+      <SheetTrigger
+        asChild
+        className="absolute left-2 sm:left-5 top-4 sm:top-5"
+      >
         <Button variant="outline" size={"sm"} className="hover:bg-mainTertiary">
           <i className="fa-solid fa-bars" />
         </Button>

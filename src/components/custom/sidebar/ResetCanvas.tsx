@@ -29,7 +29,7 @@ const ResetCanvas = () => {
             <p>Reset the canvas</p>
           </Button>
         </AlertDialogTrigger>
-        <AlertDialogContent>
+        <AlertDialogContent className="w-72 sm:w-auto">
           <AlertDialogHeader>
             <AlertDialogTitle>
               Are you sure to reset the canvas?

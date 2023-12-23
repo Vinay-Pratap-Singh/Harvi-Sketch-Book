@@ -68,7 +68,7 @@ const HeaderToolBox = () => {
   }, [dispatch, roomId]);
 
   return (
-    <section className="w-fit flex items-center my-5 py-2 px-4 shadow-md rounded-md space-x-2 absolute z-50 bg-white">
+    <section className="w-[80%] sm:w-fit flex items-center gap-1 sm:gap-2 overflow-x-scroll sm:overflow-x-hidden absolute z-50 mt-2 sm:mt-5 mr-2 sm:mr-0 py-2 px-2 sm:px-4 shadow-md rounded-md bg-white">
       {/* for lock and unlock */}
       <TooltipProvider>
         <Tooltip>
@@ -100,7 +100,7 @@ const HeaderToolBox = () => {
         </Tooltip>
       </TooltipProvider>
 
-      <Separator orientation="vertical" />
+      <Separator orientation="vertical" className="h-6 sm:h-8" />
 
       {/* for square */}
       <TooltipProvider>
@@ -286,7 +286,7 @@ const HeaderToolBox = () => {
         </Tooltip>
       </TooltipProvider>
 
-      <Separator orientation="vertical" />
+      <Separator orientation="vertical" className="h-6 sm:h-8" />
 
       {/* for undo */}
       <TooltipProvider>

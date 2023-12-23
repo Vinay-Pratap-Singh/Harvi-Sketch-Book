@@ -67,12 +67,12 @@ const ExportSketch = () => {
             <i className="fa-solid fa-download" /> <p>Export sketch</p>
           </Button>
         </DialogTrigger>
-        <DialogContent className="w-96">
+        <DialogContent className="w-80 sm:w-96">
           <DialogHeader className="space-y-5">
             <DialogTitle>Export your artwork</DialogTitle>
             <DialogDescription className="flex flex-col gap-5">
               {/* for file name */}
-              <Label>
+              <Label className="text-left">
                 File name
                 <Input
                   type="text"
@@ -90,7 +90,7 @@ const ExportSketch = () => {
 
               {/* for file type */}
               <Label>
-                <p className="mb-2">File type</p>
+                <p className="mb-2 text-left">File type</p>
                 <Select
                   value={exportData?.fileType}
                   onValueChange={(value) =>

@@ -57,8 +57,6 @@ const LiveCollaboration = () => {
       toast({
         title: message,
       });
-      // dispatch(setRoomId(""));
-      // dispatch(setUserRole(""));
     }
 
     socket.on("roomCreated", roomCreated);
@@ -80,16 +78,16 @@ const LiveCollaboration = () => {
             <p>Live collaboration</p>
           </Button>
         </DialogTrigger>
-        <DialogContent className="w-fit">
-          <Tabs defaultValue="account" className="w-[350px]">
+        <DialogContent className="w-fit p-3 sm:p-6 rounded-md">
+          <Tabs defaultValue="account" className="w-64 sm:w-[350px]">
             <TabsList className="grid w-full grid-cols-2">
               <TabsTrigger value="create">Create</TabsTrigger>
               <TabsTrigger value="join">Join</TabsTrigger>
             </TabsList>
             <TabsContent value="create">
               <Card>
-                <CardHeader>
-                  <CardTitle className="text-center">
+                <CardHeader className="p-3 sm:p-6">
+                  <CardTitle className="text-center text-xl sm:text-2xl">
                     {userRole === "admin" && roomId
                       ? "Current shared room"
                       : "Create a room"}
@@ -101,7 +99,7 @@ const LiveCollaboration = () => {
                     </CardDescription>
                   )}
                 </CardHeader>
-                <CardContent className="space-y-2">
+                <CardContent className="space-y-2 px-3 py-0 sm:px-6">
                   {userRole === "admin" && roomId ? (
                     <div className="flex items-center justify-between gap-3">
                       <p className="line-clamp-1">{roomId}</p>
@@ -124,16 +122,15 @@ const LiveCollaboration = () => {
                     </div>
                   )}
                 </CardContent>
-                <CardFooter>
+                <CardFooter className="p-3 sm:p-6">
                   {userRole === "admin" && roomId ? (
-                    <div className="flex items-center gap-3">
+                    <div className="flex flex-col sm:flex-row w-full sm:w-auto items-center gap-3">
                       <Button
                         type="button"
                         className="w-full"
                         onClick={() => {
                           socket.emit("leaveBoard", { roomId, name });
                           dispatch(setRoomId(""));
-                          // dispatch(setUserRole(""));
                         }}
                       >
                         Leave board
@@ -162,8 +159,8 @@ const LiveCollaboration = () => {
             </TabsContent>
             <TabsContent value="join">
               <Card>
-                <CardHeader>
-                  <CardTitle className="text-center">
+                <CardHeader className="p-3 sm:p-6">
+                  <CardTitle className="text-center text-xl sm:text-2xl">
                     {userRole === "user" && roomId
                       ? "Current joined room"
                       : "Join a room"}
@@ -176,7 +173,7 @@ const LiveCollaboration = () => {
                     </CardDescription>
                   )}
                 </CardHeader>
-                <CardContent className="space-y-2">
+                <CardContent className="space-y-2 px-3 py-0 sm:px-6">
                   <div className="space-y-1">
                     {userRole === "user" && roomId && name ? (
                       <div className="flex items-center justify-between gap-3">
@@ -217,7 +214,7 @@ const LiveCollaboration = () => {
                     )}
                   </div>
                 </CardContent>
-                <CardFooter>
+                <CardFooter className="p-3 sm:p-6">
                   {userRole === "user" && roomId && name ? (
                     <Button
                       variant={"destructive"}

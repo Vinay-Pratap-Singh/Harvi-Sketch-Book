@@ -5,7 +5,7 @@ import SketchBoard from "@/components/custom/SketchBoard";
 
 export default function Home() {
   return (
-    <div className="flex justify-center">
+    <div className="flex justify-end sm:justify-center relative">
       <HeaderToolBox />
       <Sidebar />
       <SketchBoard />
