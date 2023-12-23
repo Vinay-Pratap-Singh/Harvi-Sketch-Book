@@ -31,16 +31,17 @@ const HeaderToolBox = () => {
   const dispatch = useAppDispatch();
   const { isCanvasLocked, currentShape, sketchBookBackground, strokeWidth } =
     useAppSelector((state) => state.toolkit);
-  const { currentCanvasIndex } = useAppSelector((state) => state.canvas);
   const { roomId } = useAppSelector((state) => state.user);
+  const { currentCanvasIndex, allCanvasImageData } = useAppSelector(
+    (state) => state.canvas
+  );
 
   // function to set and unset the shape
   function handleShapeSelection(shape: string, color: string, width: number) {
-    // if it is already selected
     if (currentShape === shape) {
       dispatch(setCurrentShape(null));
-    } else if (currentShape === "eraser") {
-      dispatch(setCurrentShape("eraser"));
+    } else if (shape === "eraser") {
+      dispatch(setCurrentShape(shape));
       dispatch(setStrokeColor(color));
       dispatch(setStrokeStyle(STROKE_LINE_STYLE[0]));
     } else {
@@ -299,7 +300,7 @@ const HeaderToolBox = () => {
                   socket.emit("sendIndex", { operation: "undo", roomId });
                 }
               }}
-              disabled={isCanvasLocked}
+              disabled={isCanvasLocked || currentCanvasIndex < 1}
               variant={"ghost"}
               size={"sm"}
               className="hover:bg-mainTertiary"
@@ -325,7 +326,10 @@ const HeaderToolBox = () => {
                   socket.emit("sendIndex", { operation: "redo", roomId });
                 }
               }}
-              disabled={isCanvasLocked}
+              disabled={
+                isCanvasLocked ||
+                currentCanvasIndex === allCanvasImageData.length - 1
+              }
               variant={"ghost"}
               size={"sm"}
               className="hover:bg-mainTertiary"

@@ -1,5 +1,4 @@
 import { IInitialCanvasState } from "@/helper/interface/interface";
-import socket from "@/helper/socket/socket";
 import { PayloadAction, createSlice } from "@reduxjs/toolkit";
 
 const initialState: IInitialCanvasState = {
