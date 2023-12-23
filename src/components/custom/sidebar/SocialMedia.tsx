@@ -36,13 +36,34 @@ const SocialMedia = () => {
       </Link>
 
       {/* for report bug */}
-      <Button
-        variant={"outline"}
-        className="hover:bg-mainSecondary w-full flex items-center justify-start gap-2"
+      <Link
+        href="https://docs.google.com/forms/d/e/1FAIpQLSeVG5P47rFl5HtVoDCmJuyC8gKrFLN1FRLP83WJDrfefO6rjQ/viewform?usp=sf_link"
+        rel="noopener noreferrer"
+        target="_blank"
       >
-        <i className="fa-solid fa-bug" />
-        <p>Report a bug</p>
-      </Button>
+        <Button
+          variant={"outline"}
+          className="hover:bg-mainSecondary w-full flex items-center justify-start gap-2"
+        >
+          <i className="fa-solid fa-bug" />
+          <p>Report a bug</p>
+        </Button>
+      </Link>
+
+      {/* for contact us */}
+      <Link
+        href="https://harvi.netlify.app/contact"
+        rel="noopener noreferrer"
+        target="_blank"
+      >
+        <Button
+          variant={"outline"}
+          className="hover:bg-mainSecondary w-full flex items-center justify-start gap-2"
+        >
+          <i className="fa-solid fa-id-badge" />
+          <p>Contact us</p>
+        </Button>
+      </Link>
     </div>
   );
 };

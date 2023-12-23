@@ -47,6 +47,17 @@ export const toolkitSlice = createSlice({
     setFontType: (state, action) => {
       state.fontType = action.payload;
     },
+    resetToolkit: (state) => {
+      state.isCanvasLocked = false;
+      state.currentShape = null;
+      state.currentOperation = null;
+      state.strokeColor = "#000000";
+      state.strokeWidth = 1;
+      state.strokeStyle = { ...STROKE_LINE_STYLE[0] };
+      state.sketchBookBackground = "#FFFFFF";
+      state.shapeFillColor = "#FFFFFF";
+      state.fontType = FONT_TYPE[0].name;
+    },
   },
 });
 
@@ -59,5 +70,6 @@ export const {
   setStrokeStyle,
   setShapeFillColor,
   setFontType,
+  resetToolkit,
 } = toolkitSlice.actions;
 export default toolkitSlice.reducer;

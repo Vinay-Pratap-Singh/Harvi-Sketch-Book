@@ -12,14 +12,22 @@ import {
 import { Button } from "@/components/ui/button";
 import { useAppDispatch } from "@/hooks/redux";
 import { resetCanvas } from "@/redux/canvasSlice";
-import React from "react";
+import { resetToolkit } from "@/redux/toolkitSlice";
+import React, { useState } from "react";
 
 const ResetCanvas = () => {
+  const [isOpen, setIsOpen] = useState(false);
   const dispatch = useAppDispatch();
+
+  const handleReset = () => {
+    dispatch(resetCanvas());
+    dispatch(resetToolkit());
+    setIsOpen(false);
+  };
 
   return (
     <div>
-      <AlertDialog>
+      <AlertDialog open={isOpen} onOpenChange={setIsOpen}>
         <AlertDialogTrigger asChild>
           <Button
             variant={"outline"}
@@ -41,7 +49,7 @@ const ResetCanvas = () => {
           </AlertDialogHeader>
           <AlertDialogFooter>
             <AlertDialogCancel>Cancel</AlertDialogCancel>
-            <AlertDialogAction onClick={() => dispatch(resetCanvas())}>
+            <AlertDialogAction onClick={handleReset}>
               Continue
             </AlertDialogAction>
           </AlertDialogFooter>
