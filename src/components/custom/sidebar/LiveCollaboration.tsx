@@ -14,9 +14,9 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { toast } from "@/components/ui/use-toast";
 import socket from "@/helper/socket/socket";
 import { useAppDispatch, useAppSelector } from "@/hooks/redux";
-import { setName, setRoomId, setUserRole } from "@/redux/userSlice";
+import { resetUser, setName, setRoomId, setUserRole } from "@/redux/userSlice";
 
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 
 const LiveCollaboration = () => {
   const dispatch = useAppDispatch();
@@ -40,7 +40,6 @@ const LiveCollaboration = () => {
 
     function userJoin({ name, roomId }: { name: string; roomId: string }) {
       toast({ title: `${name} joined the drawing board` });
-      dispatch(setUserRole("user"));
       dispatch(setRoomId(roomId));
     }
 
@@ -56,6 +55,7 @@ const LiveCollaboration = () => {
       toast({
         title: message,
       });
+      dispatch(resetUser());
     }
 
     socket.on("roomCreated", roomCreated);
@@ -64,6 +64,15 @@ const LiveCollaboration = () => {
     socket.on("invalidRoom", invalidRoom);
     socket.on("roomDeleted", roomDeleted);
   }, [dispatch]);
+
+  console.log(
+    name,
+    roomId,
+    "redux role",
+    userRole,
+    "local storage role",
+    localStorage.getItem("role")
+  );
 
   return (
     <div>
@@ -129,7 +138,7 @@ const LiveCollaboration = () => {
                         className="w-full"
                         onClick={() => {
                           socket.emit("leaveBoard", { roomId, name });
-                          dispatch(setRoomId(""));
+                          dispatch(resetUser());
                         }}
                       >
                         Leave board
@@ -220,8 +229,7 @@ const LiveCollaboration = () => {
                       className="w-full"
                       onClick={() => {
                         socket.emit("leaveBoard", { roomId, name });
-                        dispatch(setRoomId(""));
-                        // dispatch(setUserRole(""));
+                        dispatch(resetUser());
                       }}
                       disabled={name.length < 4 || roomId.length < 5}
                     >
@@ -230,12 +238,13 @@ const LiveCollaboration = () => {
                   ) : (
                     <Button
                       className="w-full"
-                      onClick={() =>
+                      onClick={() => {
                         socket.emit("joinRoom", {
                           roomId,
                           name,
-                        })
-                      }
+                        });
+                        dispatch(setUserRole("user"));
+                      }}
                       disabled={
                         name.length < 4 ||
                         roomId.length < 5 ||

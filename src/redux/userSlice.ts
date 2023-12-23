@@ -20,8 +20,13 @@ const userSlice = createSlice({
     setUserRole: (state, action) => {
       state.userRole = action.payload;
     },
+    resetUser: (state) => {
+      state.name = "";
+      state.roomId = "";
+      state.userRole = "";
+    },
   },
 });
 
-export const { setName, setRoomId, setUserRole } = userSlice.actions;
+export const { setName, setRoomId, setUserRole, resetUser } = userSlice.actions;
 export default userSlice.reducer;
