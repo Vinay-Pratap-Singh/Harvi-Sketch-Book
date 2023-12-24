@@ -146,14 +146,14 @@ const SketchBoard = () => {
           }
         };
 
-        canvas.addEventListener("mousedown", startDrawing);
-        canvas.addEventListener("mousemove", draw);
-        canvas.addEventListener("mouseup", stopDrawing);
+        canvas.addEventListener("pointerdown", startDrawing);
+        canvas.addEventListener("pointermove", draw);
+        canvas.addEventListener("pointerup", stopDrawing);
 
         return () => {
-          canvas.removeEventListener("mousedown", startDrawing);
-          canvas.removeEventListener("mousemove", draw);
-          canvas.removeEventListener("mouseup", stopDrawing);
+          canvas.removeEventListener("pointerdown", startDrawing);
+          canvas.removeEventListener("pointermove", draw);
+          canvas.removeEventListener("pointerup", stopDrawing);
         };
       }
 
@@ -201,14 +201,14 @@ const SketchBoard = () => {
           dispatch(addCanvasImageData());
         };
 
-        canvas.addEventListener("mousedown", startDrawing);
-        canvas.addEventListener("mousemove", draw);
-        canvas.addEventListener("mouseup", stopDrawing);
+        canvas.addEventListener("pointerdown", startDrawing);
+        canvas.addEventListener("pointermove", draw);
+        canvas.addEventListener("pointerup", stopDrawing);
 
         return () => {
-          canvas.removeEventListener("mousedown", startDrawing);
-          canvas.removeEventListener("mousemove", draw);
-          canvas.removeEventListener("mouseup", stopDrawing);
+          canvas.removeEventListener("pointerdown", startDrawing);
+          canvas.removeEventListener("pointermove", draw);
+          canvas.removeEventListener("pointerup", stopDrawing);
         };
       }
 
@@ -263,14 +263,14 @@ const SketchBoard = () => {
           dispatch(addCanvasImageData());
         };
 
-        canvas.addEventListener("mousedown", startDrawing);
-        canvas.addEventListener("mousemove", draw);
-        canvas.addEventListener("mouseup", stopDrawing);
+        canvas.addEventListener("pointerdown", startDrawing);
+        canvas.addEventListener("pointermove", draw);
+        canvas.addEventListener("pointerup", stopDrawing);
 
         return () => {
-          canvas.removeEventListener("mousedown", startDrawing);
-          canvas.removeEventListener("mousemove", draw);
-          canvas.removeEventListener("mouseup", stopDrawing);
+          canvas.removeEventListener("pointerdown", startDrawing);
+          canvas.removeEventListener("pointermove", draw);
+          canvas.removeEventListener("pointerup", stopDrawing);
         };
       }
 
@@ -325,14 +325,14 @@ const SketchBoard = () => {
           dispatch(addCanvasImageData());
         };
 
-        canvas.addEventListener("mousedown", startDrawing);
-        canvas.addEventListener("mousemove", draw);
-        canvas.addEventListener("mouseup", stopDrawing);
+        canvas.addEventListener("pointerdown", startDrawing);
+        canvas.addEventListener("pointermove", draw);
+        canvas.addEventListener("pointerup", stopDrawing);
 
         return () => {
-          canvas.removeEventListener("mousedown", startDrawing);
-          canvas.removeEventListener("mousemove", draw);
-          canvas.removeEventListener("mouseup", stopDrawing);
+          canvas.removeEventListener("pointerdown", startDrawing);
+          canvas.removeEventListener("pointermove", draw);
+          canvas.removeEventListener("pointerup", stopDrawing);
         };
       }
 
@@ -387,14 +387,14 @@ const SketchBoard = () => {
           dispatch(addCanvasImageData());
         };
 
-        canvas.addEventListener("mousedown", startDrawing);
-        canvas.addEventListener("mousemove", draw);
-        canvas.addEventListener("mouseup", stopDrawing);
+        canvas.addEventListener("pointerdown", startDrawing);
+        canvas.addEventListener("pointermove", draw);
+        canvas.addEventListener("pointerup", stopDrawing);
 
         return () => {
-          canvas.removeEventListener("mousedown", startDrawing);
-          canvas.removeEventListener("mousemove", draw);
-          canvas.removeEventListener("mouseup", stopDrawing);
+          canvas.removeEventListener("pointerdown", startDrawing);
+          canvas.removeEventListener("pointermove", draw);
+          canvas.removeEventListener("pointerup", stopDrawing);
         };
       }
 
@@ -461,10 +461,10 @@ const SketchBoard = () => {
           textInput.addEventListener("blur", handleBlur, { once: true });
         };
 
-        canvas.addEventListener("mousedown", startWriting, { once: true });
+        canvas.addEventListener("pointerdown", startWriting, { once: true });
 
         return () => {
-          canvas.removeEventListener("mousedown", startWriting);
+          canvas.removeEventListener("pointerdown", startWriting);
         };
       }
 
@@ -517,10 +517,10 @@ const SketchBoard = () => {
           input.click();
         };
 
-        canvas.addEventListener("mousedown", addImage);
+        canvas.addEventListener("pointerdown", addImage);
 
         return () => {
-          canvas.removeEventListener("mousedown", addImage);
+          canvas.removeEventListener("pointerdown", addImage);
         };
       }
 

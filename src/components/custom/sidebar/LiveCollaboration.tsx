@@ -65,15 +65,6 @@ const LiveCollaboration = () => {
     socket.on("roomDeleted", roomDeleted);
   }, [dispatch]);
 
-  console.log(
-    name,
-    roomId,
-    "redux role",
-    userRole,
-    "local storage role",
-    localStorage.getItem("role")
-  );
-
   return (
     <div>
       <Dialog>
