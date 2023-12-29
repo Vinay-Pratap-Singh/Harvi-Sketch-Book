@@ -1,36 +1,68 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# **Harvi Sketch Book**
 
-## Getting Started
+## Table of content
 
-First, run the development server:
+- [Introduction](#introduction)
+- [Tech Stack](#tech-stack)
+- [Features](#features)
+- [Installation](#features)
+- [Usage](#usage)
+- [Live Link](#live-link)
+- [Backend Repository](#backend-repository)
+- [Video Walkthrough](#video-walkthrough)
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+## Introduction
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Welcome to the 'Harvi Sketch Book' frontend project, an Excalidraw clone where users can unleash their creativity on a digital canvas with a variety of drawing tools and features.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Tech Stack
 
-This project uses [`next/font`](https://nextjs.org/docs/basic-features/font-optimization) to automatically optimize and load Inter, a custom Google Font.
+- **Next.js:** A React framework for building efficient and scalable web applications.
+- **Socket.io:** Enables real-time, bidirectional, and event-based communication.
+- **ShadCN:** For designed tailwind components.
 
-## Learn More
+## Features
 
-To learn more about Next.js, take a look at the following resources:
+- **Versatile Shapes:** Choose from a range of shapes, including Square, Circle, Arrow, Line, Text, Image, Random Shapes, and Eraser.
+- **Undo and Redo:** Effortlessly navigate through your drawing history with undo and redo functionalities.
+- **Customization Options:** Personalize your drawings with various options for shape color, style, background, and size.
+- **Export Capabilities:** Save your masterpiece by exporting it in multiple formats.
+- **Live Collaboration:** Experience real-time collaboration as multiple users interact on the sketch board through socket-based technology.
+- **Bug report and Contact:** Report the bug or contact me for sharing your thoughts.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Installation
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
+To set up the Harvi Sketch Book locally, follow these steps:
 
-## Deploy on Vercel
+- Clone the repository
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+  ```js
+  git clone https://github.com/Vinay-Pratap-Singh/Harvi-Sketch-Book
+  ```
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+- Navigate to the project folder
+  ```js
+  cd harvi-sketch-book
+  ```
+- Install dependencies
+  ```js
+  npm install
+  ```
+
+## Usage
+
+- Start the development server: `npm run dev`
+- Open the app in your browser: `http://localhost:3000`
+
+## Live Link
+
+Explore the project in action and share your feedback: [Launch Project](https://harvi-sketch-book.vercel.app/)
+
+## Backend Repository
+
+If you're interested in the backend code, you can find it here:
+[Backend Repository](https://github.com/Vinay-Pratap-Singh/Harvi-Sketch-Book-Server)
+
+## Video Walkthrough
+
+For a detailed visual guide to the project, check out the video explanation: [Watch Video](https://www.linkedin.com/posts/vinay-pratap-singh-harvi-4b265a212_projectcompletion-sketchbook-canvas-activity-7144594235172790272-W2IU?utm_source=share&utm_medium=member_desktop)
